@@ -67,10 +67,10 @@ const ImageUpload = ({ onImageSelect, selectedImage, onClearImage }: ImageUpload
   }
 
   return (
-    <div className="glass-card p-8 animate-fade-in">
+    <div className="glass-card p-4 animate-fade-in">
       <div
         className={cn(
-          "border-2 border-dashed rounded-3xl p-12 text-center transition-colors cursor-pointer",
+          "border-2 border-dashed rounded-2xl p-6 transition-colors cursor-pointer flex items-center gap-4",
           isDragging 
             ? "border-primary bg-primary/5" 
             : "border-glass-border hover:border-primary/50"
@@ -88,22 +88,20 @@ const ImageUpload = ({ onImageSelect, selectedImage, onClearImage }: ImageUpload
           className="hidden"
         />
         
-        <div className="flex flex-col items-center gap-4">
-          <div className="p-4 glass-button rounded-full">
-            <Upload className="h-8 w-8 text-primary" />
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              Upload Nature Image
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Drop your image here or click to browse
-            </p>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <ImageIcon className="h-4 w-4" />
-              JPG, PNG, WEBP up to 10MB
-            </div>
+        <div className="p-3 glass-button rounded-full flex-shrink-0">
+          <Upload className="h-5 w-5 text-primary" />
+        </div>
+        
+        <div className="text-left flex-1">
+          <h3 className="text-base font-semibold text-foreground mb-1">
+            Upload Nature Image
+          </h3>
+          <p className="text-sm text-muted-foreground mb-1">
+            Drop your image here or click to browse
+          </p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <ImageIcon className="h-3 w-3" />
+            JPG, PNG, WEBP up to 10MB
           </div>
         </div>
       </div>
