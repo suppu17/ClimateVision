@@ -1,6 +1,6 @@
 import ImageUpload from "./ImageUpload";
 import EffectSelector from "./EffectSelector";
-import { Download, Share, RotateCcw } from "lucide-react";
+import { Download, Share, RotateCcw, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useState } from "react";
@@ -8,26 +8,32 @@ import { useState } from "react";
 interface VideoHeroProps {
   selectedImage: string | null;
   generatedImage: string | null;
+  generatedVideo: string | null;
   selectedEffect: string | null;
   effectCategory: "effects" | "improvements" | null;
   isGenerating: boolean;
+  isGeneratingVideo: boolean;
   onImageSelect: (file: File) => void;
   onClearImage: () => void;
   onEffectSelect: (effectId: string, category: "effects" | "improvements") => void;
   onGenerate: () => void;
+  onGenerateVideo: () => void;
   onReset: () => void;
 }
 
 const VideoHero = ({ 
   selectedImage, 
   generatedImage,
+  generatedVideo,
   selectedEffect, 
   effectCategory, 
   isGenerating,
+  isGeneratingVideo,
   onImageSelect,
   onClearImage,
   onEffectSelect,
   onGenerate,
+  onGenerateVideo,
   onReset 
 }: VideoHeroProps) => {
   const { addNotification } = useNotifications();
@@ -77,7 +83,7 @@ const VideoHero = ({
   };
 
   // Determine which content to show as backdrop
-  const backdropContent = generatedImage || selectedImage;
+  const backdropContent = generatedVideo || generatedImage || selectedImage;
   const showVideo = !backdropContent;
 
   return (
@@ -104,8 +110,19 @@ const VideoHero = ({
               <source src="https://cdn.midjourney.com/video/ae3b755e-e526-4ef1-8168-4c68b97a3af1/0.mp4" type="video/mp4" />
             </video>
           </>
+        ) : generatedVideo ? (
+          // Show generated video
+          <video 
+            src={generatedVideo} 
+            className="w-full h-full object-cover transition-all duration-1000"
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+          />
         ) : (
-          // Show uploaded or generated content as backdrop
+          // Show uploaded or generated image as backdrop
           <img 
             src={backdropContent} 
             alt="Climate visualization backdrop" 
@@ -148,6 +165,39 @@ const VideoHero = ({
                   minimal={true}
                 />
               </div>
+            ) : generatedVideo ? (
+              <div className="glass-card p-6 animate-slide-up">
+                <div className="space-y-4 text-center">
+                  <p className="text-white/90 text-lg font-medium">
+                    Climate solution video generated! See how {selectedEffect} resolves the climate issue.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button 
+                      onClick={handleDownload}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Image
+                    </Button>
+                    <Button 
+                      onClick={handleShare}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Share className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={onReset}
+                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Try Another Effect
+                    </Button>
+                  </div>
+                </div>
+              </div>
             ) : generatedImage ? (
               <div className="glass-card p-6 animate-slide-up">
                 <div className="space-y-4 text-center">
@@ -170,6 +220,14 @@ const VideoHero = ({
                     >
                       <Share className="h-4 w-4 mr-2" />
                       Share
+                    </Button>
+                    <Button 
+                      onClick={onGenerateVideo}
+                      disabled={isGeneratingVideo}
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90 disabled:opacity-50"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      {isGeneratingVideo ? "Generating Solution Video..." : "Generate Solution Video"}
                     </Button>
                     <Button 
                       onClick={onReset}

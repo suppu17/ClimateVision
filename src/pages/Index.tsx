@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
 import { geminiService } from "@/services/geminiService";
 import { NotificationProvider, useNotifications } from "@/contexts/NotificationContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const IndexContent = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -12,6 +13,8 @@ const IndexContent = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showUploadSection, setShowUploadSection] = useState(false);
+  const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
   const { addNotification } = useNotifications();
 
@@ -74,8 +77,65 @@ const IndexContent = () => {
     }
   };
 
+  const handleGenerateVideo = async () => {
+    if (!generatedImage || !selectedEffect || !effectCategory) {
+      addNotification("error", "Please generate a climate impact image first.");
+      return;
+    }
+
+    setIsGeneratingVideo(true);
+
+    try {
+      // Create a comprehensive prompt that shows the solution resolving the climate issue
+      let videoPrompt = "";
+      if (effectCategory === "effects") {
+        videoPrompt = `Transform this climate impact scene by reversing the damage: ${selectedEffect}. Show the environment healing and returning to a healthy, natural state. The transformation should be gradual and hopeful, demonstrating environmental restoration and recovery.`;
+      } else {
+        videoPrompt = `Show how this solution actively resolves the climate issue: ${selectedEffect}. Display the positive environmental transformation, with the solution being implemented and the climate problem being addressed. Show progress from damaged environment to restored, healthy ecosystem.`;
+      }
+
+      // Convert generated image to base64 for the API
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-video', {
+        body: {
+          imageData: base64,
+          prompt: videoPrompt
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.videoUrl) {
+        setGeneratedVideo(data.videoUrl);
+        addNotification("success", "Video showing climate solution generated successfully!");
+      } else {
+        throw new Error("No video URL returned from generation service");
+      }
+
+    } catch (error) {
+      console.error("Video generation error:", error);
+      if (error instanceof Error) {
+        addNotification("error", `Failed to generate video: ${error.message}`);
+      } else {
+        addNotification("error", "Failed to generate video. Please try again.");
+      }
+    } finally {
+      setIsGeneratingVideo(false);
+    }
+  };
+
   const handleReset = () => {
     setGeneratedImage(null);
+    setGeneratedVideo(null);
     setSelectedEffect(null);
     setEffectCategory(null);
     addNotification("info", "Ready for another climate effect!");
@@ -89,13 +149,16 @@ const IndexContent = () => {
       <VideoHero 
         selectedImage={selectedImage}
         generatedImage={generatedImage}
+        generatedVideo={generatedVideo}
         selectedEffect={selectedEffect}
         effectCategory={effectCategory}
         isGenerating={isGenerating}
+        isGeneratingVideo={isGeneratingVideo}
         onImageSelect={handleImageSelect}
         onClearImage={handleClearImage}
         onEffectSelect={handleEffectSelect}
         onGenerate={handleGenerate}
+        onGenerateVideo={handleGenerateVideo}
         onReset={handleReset}
       />
       
