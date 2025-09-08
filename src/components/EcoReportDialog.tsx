@@ -85,15 +85,15 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-card bg-card/95 backdrop-blur-xl border-border">
-        <DialogHeader className="border-b border-border pb-4">
-          <div className="flex items-center gap-2 text-primary">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-teal-800 backdrop-blur-xl border-teal-600">
+        <DialogHeader className="border-b border-teal-600 pb-4">
+          <div className="flex items-center gap-2 text-teal-200">
             <AlertTriangle className="h-5 w-5" />
-            <DialogTitle className="text-xl font-bold text-foreground">
+            <DialogTitle className="text-xl font-bold text-white">
               EcoVoice Environmental Report
             </DialogTitle>
           </div>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-white/80">
             Report environmental violations to help protect our planet and communities
           </DialogDescription>
         </DialogHeader>
@@ -101,9 +101,9 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           {/* Violation Information */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-cyan-400">
+            <div className="flex items-center gap-2 text-teal-200">
               <FileText className="h-4 w-4" />
-              <h3 className="font-semibold">Violation Information</h3>
+              <h3 className="font-semibold text-white">Violation Information</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -112,17 +112,17 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   Type of Violation <span className="text-red-500">*</span>
                 </Label>
                 <Select value={formData.violationType} onValueChange={(value) => setFormData({...formData, violationType: value})}>
-                  <SelectTrigger className="bg-slate-800 border-slate-600 text-white">
+                  <SelectTrigger className="bg-teal-700 border-teal-500 text-white">
                     <SelectValue placeholder="Select violation type" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="air-pollution">Air Pollution</SelectItem>
-                    <SelectItem value="water-pollution">Water Pollution</SelectItem>
-                    <SelectItem value="noise-pollution">Noise Pollution</SelectItem>
-                    <SelectItem value="soil-contamination">Soil Contamination</SelectItem>
-                    <SelectItem value="illegal-dumping">Illegal Dumping</SelectItem>
-                    <SelectItem value="deforestation">Deforestation</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                  <SelectContent className="bg-teal-700 border-teal-500 text-white">
+                    <SelectItem value="air-pollution" className="text-white hover:bg-teal-600">Air Pollution</SelectItem>
+                    <SelectItem value="water-pollution" className="text-white hover:bg-teal-600">Water Pollution</SelectItem>
+                    <SelectItem value="noise-pollution" className="text-white hover:bg-teal-600">Noise Pollution</SelectItem>
+                    <SelectItem value="soil-contamination" className="text-white hover:bg-teal-600">Soil Contamination</SelectItem>
+                    <SelectItem value="illegal-dumping" className="text-white hover:bg-teal-600">Illegal Dumping</SelectItem>
+                    <SelectItem value="deforestation" className="text-white hover:bg-teal-600">Deforestation</SelectItem>
+                    <SelectItem value="other" className="text-white hover:bg-teal-600">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -132,14 +132,14 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   Severity Level <span className="text-red-500">*</span>
                 </Label>
                 <Select value={formData.severityLevel} onValueChange={(value) => setFormData({...formData, severityLevel: value})}>
-                  <SelectTrigger className="bg-slate-800 border-slate-600 text-white">
+                  <SelectTrigger className="bg-teal-700 border-teal-500 text-white">
                     <SelectValue placeholder="Select severity" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="critical">Critical</SelectItem>
+                  <SelectContent className="bg-teal-700 border-teal-500 text-white">
+                    <SelectItem value="low" className="text-white hover:bg-teal-600">Low</SelectItem>
+                    <SelectItem value="medium" className="text-white hover:bg-teal-600">Medium</SelectItem>
+                    <SelectItem value="high" className="text-white hover:bg-teal-600">High</SelectItem>
+                    <SelectItem value="critical" className="text-white hover:bg-teal-600">Critical</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -154,16 +154,16 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 placeholder="e.g., Chemical name, waste type, etc."
                 value={formData.pollutant}
                 onChange={(e) => setFormData({...formData, pollutant: e.target.value})}
-                className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
+                className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60"
               />
             </div>
           </div>
 
           {/* Location & Time */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-cyan-400">
+            <div className="flex items-center gap-2 text-teal-200">
               <MapPin className="h-4 w-4" />
-              <h3 className="font-semibold">Location & Time</h3>
+              <h3 className="font-semibold text-white">Location & Time</h3>
             </div>
 
             <div className="space-y-2">
@@ -175,7 +175,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 placeholder="Street address, city, state, or GPS coordinates"
                 value={formData.location}
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
+                className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60"
               />
             </div>
 
@@ -189,7 +189,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   type="date"
                   value={formData.dateOfIncident}
                   onChange={(e) => setFormData({...formData, dateOfIncident: e.target.value})}
-                  className="bg-slate-800 border-slate-600 text-white"
+                  className="bg-teal-700 border-teal-500 text-white"
                 />
               </div>
 
@@ -202,7 +202,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   type="time"
                   value={formData.timeOfIncident}
                   onChange={(e) => setFormData({...formData, timeOfIncident: e.target.value})}
-                  className="bg-slate-800 border-slate-600 text-white"
+                  className="bg-teal-700 border-teal-500 text-white"
                 />
               </div>
             </div>
@@ -221,7 +221,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 placeholder="Provide detailed description of what you observed, including any visible effects on environment, wildlife, or public health..."
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500 min-h-[100px]"
+                className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60 min-h-[100px]"
               />
             </div>
           </div>
@@ -235,16 +235,16 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 placeholder="Any additional context, previous incidents, or relevant information..."
                 value={formData.additionalInfo}
                 onChange={(e) => setFormData({...formData, additionalInfo: e.target.value})}
-                className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500 min-h-[80px]"
+                className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60 min-h-[80px]"
               />
             </div>
           </div>
 
           {/* Reporter Information */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-cyan-400">
+            <div className="flex items-center gap-2 text-teal-200">
               <User className="h-4 w-4" />
-              <h3 className="font-semibold">Reporter Information</h3>
+              <h3 className="font-semibold text-white">Reporter Information</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -257,7 +257,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   placeholder="Full name"
                   value={formData.reporterName}
                   onChange={(e) => setFormData({...formData, reporterName: e.target.value})}
-                  className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
+                  className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60"
                 />
               </div>
 
@@ -271,7 +271,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                   placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
+                  className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60"
                 />
               </div>
             </div>
@@ -285,7 +285,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 placeholder="(555) 123-4567"
                 value={formData.phoneNumber}
                 onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
-                className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
+                className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60"
               />
             </div>
           </div>
@@ -300,18 +300,18 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
+          <div className="flex justify-end gap-4 pt-4 border-t border-teal-600">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
-              className="bg-transparent border-slate-600 text-white hover:bg-slate-800"
+              className="bg-transparent border-teal-500 text-white hover:bg-teal-700"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-teal-600 hover:bg-teal-700 text-white"
             >
               Submit Report
             </Button>
