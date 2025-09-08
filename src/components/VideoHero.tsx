@@ -27,13 +27,14 @@ const VideoHero = () => {
             Learn through AI-powered visualizations that show both the challenges and solutions.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="glass-button px-8 py-4 text-primary-foreground font-semibold rounded-2xl hover:scale-105 transition-transform">
-              Start Exploring
-            </button>
-            <button className="glass-button px-8 py-4 text-primary-foreground/80 font-medium rounded-2xl hover:scale-105 transition-transform">
-              Learn More
-            </button>
+          <div className="mt-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-4">
+              Start Your Climate Journey
+            </h2>
+            <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-6">
+              Upload an image of nature and explore how climate change impacts our environment, 
+              or discover solutions that can make a difference.
+            </p>
           </div>
         </div>
 

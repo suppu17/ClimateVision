@@ -104,16 +104,6 @@ const Index = () => {
       <main className="container mx-auto px-4 py-16 space-y-12">
         {/* Upload Section */}
         <section id="upload-section" className="animate-fade-in">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Start Your Climate Journey
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Upload an image of nature and explore how climate change impacts our environment, 
-              or discover solutions that can make a difference.
-            </p>
-          </div>
-
           <div className="max-w-2xl mx-auto">
             <ImageUpload 
               onImageSelect={handleImageSelect}
