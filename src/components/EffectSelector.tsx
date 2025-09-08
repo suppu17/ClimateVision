@@ -157,16 +157,14 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
 
         {/* Fixed Generate Button Container */}
         <div className="min-h-[56px] flex items-center justify-center">
-          {selectedEffect && (
-            <Button
-              onClick={onGenerate}
-              disabled={isGenerating}
-              className="bg-gradient-nature text-white hover:opacity-90 px-8 py-3 rounded-full font-medium transition-all animate-fade-in"
-            >
-              <Bot className="h-4 w-4 mr-2" />
-              {isGenerating ? "Generating Climate Impact..." : "Generate Climate Impact"}
-            </Button>
-          )}
+          <Button
+            onClick={onGenerate}
+            disabled={isGenerating || !selectedEffect}
+            className="bg-gradient-nature text-white hover:opacity-90 disabled:opacity-50 px-8 py-3 rounded-full font-medium transition-all"
+          >
+            <Bot className="h-4 w-4 mr-2" />
+            {isGenerating ? "Generating Climate Impact..." : "Generate Climate Impact"}
+          </Button>
         </div>
       </div>
     );
@@ -237,18 +235,17 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsContent>
       </Tabs>
 
-      {selectedEffect && (
-        <div className={cn(minimal ? "mt-4" : "mt-6 pt-6 border-t border-glass-border")}>
-          <Button 
-            onClick={onGenerate}
-            disabled={isGenerating}
-            className="w-full bg-gradient-nature text-primary-foreground hover:opacity-90 transition-opacity"
-            size={minimal ? "default" : "lg"}
-          >
-            {isGenerating ? "Generating..." : "Generate Climate Impact"}
-          </Button>
-        </div>
-      )}
+      <div className={cn(minimal ? "mt-4" : "mt-6 pt-6 border-t border-glass-border")}>
+        <Button 
+          onClick={onGenerate}
+          disabled={isGenerating || !selectedEffect}
+          className="w-full bg-gradient-nature text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity"
+          size={minimal ? "default" : "lg"}
+        >
+          <Bot className="h-4 w-4 mr-2" />
+          {isGenerating ? "Generating..." : "Generate Climate Impact"}
+        </Button>
+      </div>
     </div>
   );
 };
