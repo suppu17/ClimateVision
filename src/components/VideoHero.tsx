@@ -119,25 +119,17 @@ const VideoHero = ({
       {/* Dynamic Background */}
       <div className="absolute inset-0 w-full h-full">
         {showVideo ? (
-          // Show video when no image is uploaded
-          <>
-            <video
-              className="w-full h-full object-cover"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster=""
-              style={{ 
-                filter: 'none',
-                imageRendering: 'crisp-edges',
-                objectFit: 'cover'
-              }}
-            >
-              <source src="https://cdn.midjourney.com/video/ae3b755e-e526-4ef1-8168-4c68b97a3af1/0.mp4" type="video/mp4" />
-            </video>
-          </>
+          // Show image when no content is uploaded
+          <img 
+            src="https://cdn.midjourney.com/806004e4-90e4-45a3-8d71-c7308c9ab2a8/0_1.png"
+            alt="Climate visualization background"
+            className="w-full h-full object-cover"
+            style={{ 
+              filter: 'none',
+              imageRendering: 'crisp-edges',
+              objectFit: 'cover'
+            }}
+          />
         ) : generatedVideo ? (
           // Show generated video
           <video 
