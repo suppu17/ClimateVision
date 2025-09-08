@@ -199,6 +199,16 @@ All colors MUST be HSL.
   .text-glow {
     text-shadow: 0 0 20px hsl(var(--primary-glow) / 0.5);
   }
+
+  /* Hide scrollbars */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
 
 @keyframes fadeIn {

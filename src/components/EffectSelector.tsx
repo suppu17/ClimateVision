@@ -108,12 +108,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         {/* Quick Suggestions */}
         <div className="space-y-2">
           <Label className="text-white/80 text-xs">Quick suggestions:</Label>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {(activeTab === "effects" ? effectSuggestions : solutionSuggestions).map((suggestion, index) => (
               <button
                 key={index}
                 onClick={() => handleQuickSelect(suggestion)}
-                className="text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all"
+                className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all whitespace-nowrap"
               >
                 {suggestion}
               </button>
@@ -180,12 +180,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
             
             <div>
               <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {effectSuggestions.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleQuickSelect(suggestion)}
-                    className="text-left p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all"
+                    className="flex-shrink-0 p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all whitespace-nowrap"
                   >
                     {suggestion}
                   </button>
@@ -212,12 +212,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
             
             <div>
               <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {solutionSuggestions.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleQuickSelect(suggestion)}
-                    className="text-left p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all"
+                    className="flex-shrink-0 p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all whitespace-nowrap"
                   >
                     {suggestion}
                   </button>
