@@ -1,4 +1,4 @@
-import { Leaf, Volume2, Phone } from "lucide-react";
+import { Leaf } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "./NotificationBell";
 import EcoReportDialog from "./EcoReportDialog";
@@ -18,24 +18,23 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
+            <NotificationBell />
             <button 
               onClick={() => setIsEcoReportOpen(true)}
               className="text-white font-bold hover:text-white/90 transition-colors"
             >
               EcoVoice
             </button>
-            <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
-              <Phone className="h-4 w-4" />
-              Emergency Contact
-            </button>
-            <NotificationBell />
           </nav>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
             <NotificationBell />
-            <button className="p-2 text-white">
-              <Leaf className="h-6 w-6" />
+            <button 
+              onClick={() => setIsEcoReportOpen(true)}
+              className="text-white font-bold hover:text-white/90 transition-colors text-sm"
+            >
+              EcoVoice
             </button>
           </div>
         </div>
