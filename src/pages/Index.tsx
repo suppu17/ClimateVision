@@ -84,6 +84,7 @@ const IndexContent = () => {
     }
 
     setIsGeneratingVideo(true);
+    addNotification("info", "Starting video generation... This may take 30-60 seconds.");
 
     try {
       // Create a comprehensive prompt that shows the solution resolving the climate issue
@@ -103,12 +104,19 @@ const IndexContent = () => {
         reader.readAsDataURL(blob);
       });
 
-      const { data, error } = await supabase.functions.invoke('generate-video', {
+      // Set a timeout for the video generation
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Video generation timed out')), 120000); // 2 minute timeout
+      });
+
+      const generationPromise = supabase.functions.invoke('generate-video', {
         body: {
           imageData: base64,
           prompt: videoPrompt
         }
       });
+
+      const { data, error } = await Promise.race([generationPromise, timeoutPromise]);
 
       if (error) {
         throw error;
@@ -123,7 +131,9 @@ const IndexContent = () => {
 
     } catch (error) {
       console.error("Video generation error:", error);
-      if (error instanceof Error) {
+      if (error instanceof Error && error.message === 'Video generation timed out') {
+        addNotification("error", "Video generation timed out. Please try again with a simpler prompt.");
+      } else if (error instanceof Error) {
         addNotification("error", `Failed to generate video: ${error.message}`);
       } else {
         addNotification("error", "Failed to generate video. Please try again.");

@@ -21,13 +21,18 @@ serve(async (req) => {
     // Get FAL API key from Supabase secrets
     const FAL_API_KEY = Deno.env.get('FAL_API_KEY')
     if (!FAL_API_KEY) {
+      console.error('FAL API key not configured')
       throw new Error('FAL API key not configured')
     }
+
+    console.log('FAL API key found, proceeding with video generation...')
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    console.log('Supabase client initialized, uploading image...')
 
     // Upload image to Supabase storage first
     const imageBuffer = Uint8Array.from(atob(imageData.split(',')[1]), c => c.charCodeAt(0))
@@ -41,8 +46,10 @@ serve(async (req) => {
 
     if (uploadError) {
       console.error('Upload error:', uploadError)
-      throw new Error('Failed to upload image to storage')
+      throw new Error(`Failed to upload image to storage: ${uploadError.message}`)
     }
+
+    console.log('Image uploaded successfully, generating public URL...')
 
     // Get public URL
     const { data: urlData } = supabase.storage
@@ -51,9 +58,13 @@ serve(async (req) => {
 
     const publicImageUrl = urlData.publicUrl
 
-    console.log('Generating video with FAL AI using image:', publicImageUrl)
+    console.log('Public URL generated:', publicImageUrl)
+    console.log('Starting video generation with optimized settings...')
+    console.log('Prompt:', prompt)
 
-    // Generate video using FAL AI with correct Veo3 endpoint
+    console.log('Starting video generation with FAL AI...')
+
+    // Generate video using FAL AI with optimized settings for speed
     const response = await fetch('https://fal.run/fal-ai/veo3/fast/image-to-video', {
       method: 'POST',
       headers: {
@@ -63,24 +74,32 @@ serve(async (req) => {
       body: JSON.stringify({
         prompt: prompt,
         image_url: publicImageUrl,
-        duration: "8s",
-        generate_audio: true,
+        duration: "4s", // Reduced from 8s for faster generation
+        generate_audio: false, // Disabled for faster processing
         resolution: "720p"
       }),
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('FAL API error:', errorText)
-      throw new Error(`FAL API error: ${response.statusText} - ${errorText}`)
+      console.error('FAL API error response:', response.status, response.statusText)
+      console.error('FAL API error details:', errorText)
+      throw new Error(`FAL API error (${response.status}): ${errorText}`)
     }
 
+    console.log('FAL API responded successfully, processing result...')
+
     const result = await response.json()
-    console.log('FAL API result:', result)
+    console.log('FAL API result received')
+    console.log('Video generation completed successfully')
     
     if (!result.video?.url) {
+      console.error('No video URL in result:', result)
       throw new Error('No video URL returned from FAL API')
     }
+    
+    console.log('Video URL:', result.video.url)
+    console.log('Returning successful response...')
     
     return new Response(
       JSON.stringify({ 

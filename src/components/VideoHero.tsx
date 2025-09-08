@@ -228,7 +228,7 @@ const VideoHero = ({
                       className="glass-button"
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      {isGeneratingVideo ? "Generating Video..." : "Generate Video"}
+                      {isGeneratingVideo ? "Generating Video (30-60s)..." : "Generate Video"}
                     </Button>
                     <Button 
                       onClick={onReset}
