@@ -1,41 +1,187 @@
-const VideoHero = () => {
+import ImageUpload from "./ImageUpload";
+import EffectSelector from "./EffectSelector";
+import { Download, Share, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+interface VideoHeroProps {
+  selectedImage: string | null;
+  generatedImage: string | null;
+  selectedEffect: string | null;
+  effectCategory: "effects" | "improvements" | null;
+  isGenerating: boolean;
+  onImageSelect: (file: File) => void;
+  onClearImage: () => void;
+  onEffectSelect: (effectId: string, category: "effects" | "improvements") => void;
+  onGenerate: () => void;
+  onReset: () => void;
+}
+
+const VideoHero = ({ 
+  selectedImage, 
+  generatedImage, 
+  selectedEffect, 
+  effectCategory, 
+  isGenerating,
+  onImageSelect,
+  onClearImage,
+  onEffectSelect,
+  onGenerate,
+  onReset 
+}: VideoHeroProps) => {
+  
+  const handleDownload = async () => {
+    if (!generatedImage) return;
+    try {
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `climate-effect-${selectedEffect}-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Image downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to download image");
+    }
+  };
+
+  const handleShare = async () => {
+    if (!generatedImage) return;
+    if (navigator.share) {
+      try {
+        const response = await fetch(generatedImage);
+        const blob = await response.blob();
+        const file = new File([blob], `climate-effect-${selectedEffect}.png`, { type: 'image/png' });
+        
+        await navigator.share({
+          title: 'Climate Impact Visualization',
+          text: `Check out this climate impact visualization created with ClimateVision AI`,
+          files: [file]
+        });
+        toast.success("Shared successfully!");
+      } catch (error) {
+        navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
+  // Determine which image to show as backdrop
+  const backdropImage = generatedImage || selectedImage;
+  const showVideo = !backdropImage;
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Video */}
+      {/* Dynamic Background */}
       <div className="absolute inset-0 w-full h-full">
-        <video
-          className="w-full h-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src="https://cdn.midjourney.com/video/7819b5ec-35f8-413c-beb9-4fa5b926074a/0.mp4" type="video/mp4" />
-        </video>
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-hero"></div>
+        {showVideo ? (
+          // Show video when no image is uploaded
+          <>
+            <video
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+            >
+              <source src="https://cdn.midjourney.com/video/7819b5ec-35f8-413c-beb9-4fa5b926074a/0.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-hero"></div>
+          </>
+        ) : (
+          // Show uploaded or generated image as backdrop
+          <>
+            <img 
+              src={backdropImage} 
+              alt="Climate visualization backdrop" 
+              className="w-full h-full object-cover transition-all duration-1000"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </>
+        )}
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-        <div className="glass-card p-8 md:p-12 animate-fade-in">
-          <div className="mt-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-4">
-              Start Your Climate Journey
-            </h2>
-            <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-6">
-              Upload an image of nature and explore how climate change impacts our environment, 
-              or discover solutions that can make a difference.
-            </p>
+      {/* Fixed Content Overlay */}
+      <div className="relative z-10 w-full h-full flex flex-col">
+        {/* Top Section - Title and Upload */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center max-w-4xl mx-auto px-6">
+            <div className="glass-card p-8 md:p-12 animate-fade-in">
+              <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-6">
+                Start Your Climate Journey
+              </h2>
+              
+              {!selectedImage ? (
+                <div className="max-w-lg mx-auto">
+                  <ImageUpload 
+                    onImageSelect={onImageSelect}
+                    selectedImage={selectedImage}
+                    onClearImage={onClearImage}
+                  />
+                </div>
+              ) : generatedImage ? (
+                <div className="space-y-4">
+                  <p className="text-primary-foreground/90">
+                    Climate effect visualization complete! 
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button 
+                      onClick={handleDownload}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                    <Button 
+                      onClick={handleShare}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Share className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={onReset}
+                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Try Another Effect
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-primary-foreground/90">
+                  Great! Now choose a climate effect to visualize
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-float">
-          <div className="glass w-6 h-10 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-primary-foreground/60 rounded-full mt-2 animate-pulse"></div>
+        {/* Bottom Section - Effects Selector (only when image uploaded but not generated) */}
+        {selectedImage && !generatedImage && (
+          <div className="p-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="glass-card p-6 animate-slide-up">
+                <EffectSelector
+                  selectedEffect={selectedEffect}
+                  onEffectSelect={onEffectSelect}
+                  onGenerate={onGenerate}
+                  isGenerating={isGenerating}
+                  minimal={true}
+                />
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

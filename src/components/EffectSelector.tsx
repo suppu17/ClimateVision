@@ -93,43 +93,46 @@ interface EffectSelectorProps {
   onEffectSelect: (effectId: string, category: "effects" | "improvements") => void;
   onGenerate: () => void;
   isGenerating?: boolean;
+  minimal?: boolean;
 }
 
-const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerating }: EffectSelectorProps) => {
+const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerating, minimal = false }: EffectSelectorProps) => {
   const [activeTab, setActiveTab] = useState<"effects" | "improvements">("effects");
 
   const EffectCard = ({ effect }: { effect: Effect }) => (
     <div
       className={cn(
-        "glass-card p-4 cursor-pointer transition-all duration-300 hover:scale-105",
+        minimal ? "glass-card p-3 cursor-pointer transition-all duration-300 hover:scale-105" : "glass-card p-4 cursor-pointer transition-all duration-300 hover:scale-105",
         selectedEffect === effect.id ? "ring-2 ring-primary glow" : ""
       )}
       onClick={() => onEffectSelect(effect.id, effect.category)}
     >
-      <div className="flex items-center gap-3 mb-3">
+      <div className={cn("flex items-center gap-3", minimal ? "mb-2" : "mb-3")}>
         <div className={cn(
-          "p-2 rounded-lg",
+          minimal ? "p-1.5 rounded-lg" : "p-2 rounded-lg",
           effect.category === "effects" ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
         )}>
           {effect.icon}
         </div>
-        <h3 className="font-semibold text-foreground">{effect.name}</h3>
+        <h3 className={cn("font-semibold text-foreground", minimal ? "text-sm" : "")}>{effect.name}</h3>
       </div>
-      <p className="text-sm text-muted-foreground">{effect.description}</p>
+      {!minimal && <p className="text-sm text-muted-foreground">{effect.description}</p>}
     </div>
   );
 
   return (
-    <div className="glass-card p-6 animate-slide-up">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Choose Climate Effect</h2>
-        <p className="text-muted-foreground">
-          Select how you want to transform your image to learn about climate impact
-        </p>
-      </div>
+    <div className={minimal ? "" : "glass-card p-6 animate-slide-up"}>
+      {!minimal && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Choose Climate Effect</h2>
+          <p className="text-muted-foreground">
+            Select how you want to transform your image to learn about climate impact
+          </p>
+        </div>
+      )}
 
       <Tabs defaultValue="effects" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 glass mb-6">
+        <TabsList className={cn("grid w-full grid-cols-2 glass", minimal ? "mb-4" : "mb-6")}>
           <TabsTrigger 
             value="effects" 
             className="data-[state=active]:bg-destructive/20 data-[state=active]:text-destructive"
@@ -145,7 +148,7 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsList>
 
         <TabsContent value="effects" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={cn("grid gap-3", minimal ? "grid-cols-2 lg:grid-cols-5" : "grid-cols-1 md:grid-cols-2 gap-4")}>
             {climateEffects.map((effect) => (
               <EffectCard key={effect.id} effect={effect} />
             ))}
@@ -153,7 +156,7 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsContent>
 
         <TabsContent value="improvements" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={cn("grid gap-3", minimal ? "grid-cols-2 lg:grid-cols-5" : "grid-cols-1 md:grid-cols-2 gap-4")}>
             {improvements.map((effect) => (
               <EffectCard key={effect.id} effect={effect} />
             ))}
@@ -162,14 +165,14 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
       </Tabs>
 
       {selectedEffect && (
-        <div className="mt-6 pt-6 border-t border-glass-border">
+        <div className={cn(minimal ? "mt-4" : "mt-6 pt-6 border-t border-glass-border")}>
           <Button 
             onClick={onGenerate}
             disabled={isGenerating}
             className="w-full bg-gradient-nature text-primary-foreground hover:opacity-90 transition-opacity"
-            size="lg"
+            size={minimal ? "default" : "lg"}
           >
-            {isGenerating ? "Generating Climate Vision..." : "Generate Climate Impact"}
+            {isGenerating ? "Generating..." : "Generate Climate Impact"}
           </Button>
         </div>
       )}

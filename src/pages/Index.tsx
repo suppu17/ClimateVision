@@ -1,9 +1,6 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
-import ImageUpload from "@/components/ImageUpload";
-import EffectSelector from "@/components/EffectSelector";
-import ResultComparison from "@/components/ResultComparison";
 import { geminiService } from "@/services/geminiService";
 import { toast } from "sonner";
 
@@ -82,86 +79,23 @@ const Index = () => {
     toast.info("Ready for another climate effect!");
   };
 
-  const scrollToUpload = () => {
-    setShowUploadSection(true);
-    setTimeout(() => {
-      document.getElementById('upload-section')?.scrollIntoView({ 
-        behavior: 'smooth' 
-      });
-    }, 100);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero Section */}
-      <div onClick={scrollToUpload} className="cursor-pointer">
-        <VideoHero />
-      </div>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-16 space-y-12">
-        {/* Upload Section */}
-        <section id="upload-section" className="animate-fade-in">
-          <div className="max-w-2xl mx-auto">
-            <ImageUpload 
-              onImageSelect={handleImageSelect}
-              selectedImage={selectedImage}
-              onClearImage={handleClearImage}
-            />
-          </div>
-        </section>
-
-        {/* Effect Selection */}
-        {selectedImage && (
-          <section className="animate-slide-up">
-            <div className="max-w-4xl mx-auto">
-              <EffectSelector
-                selectedEffect={selectedEffect}
-                onEffectSelect={handleEffectSelect}
-                onGenerate={handleGenerate}
-                isGenerating={isGenerating}
-              />
-            </div>
-          </section>
-        )}
-
-        {/* Results Section */}
-        {generatedImage && (
-          <ResultComparison
-            originalImage={selectedImage!}
-            generatedImage={generatedImage}
-            effectName={selectedEffect!}
-            onReset={handleReset}
-          />
-        )}
-
-        {/* Info Section */}
-        <section className="text-center glass-card p-8 max-w-4xl mx-auto animate-fade-in">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            Learn Through Visualization
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            ClimateVision uses advanced AI to help you understand the impact of climate change 
-            and explore sustainable solutions. Every image tells a story about our planet's future.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6 text-sm">
-            <div className="glass-card p-4">
-              <h3 className="font-semibold text-primary mb-2">Climate Effects</h3>
-              <p className="text-muted-foreground">See how wildfires, pollution, and extreme weather affect nature</p>
-            </div>
-            <div className="glass-card p-4">
-              <h3 className="font-semibold text-primary mb-2">Solutions</h3>
-              <p className="text-muted-foreground">Explore renewable energy, reforestation, and conservation</p>
-            </div>
-            <div className="glass-card p-4">
-              <h3 className="font-semibold text-primary mb-2">AI-Powered</h3>
-              <p className="text-muted-foreground">Advanced image generation for realistic climate scenarios</p>
-            </div>
-          </div>
-        </section>
-      </main>
+      {/* Fixed Hero Layout - All Interactions Happen Here */}
+      <VideoHero 
+        selectedImage={selectedImage}
+        generatedImage={generatedImage}
+        selectedEffect={selectedEffect}
+        effectCategory={effectCategory}
+        isGenerating={isGenerating}
+        onImageSelect={handleImageSelect}
+        onClearImage={handleClearImage}
+        onEffectSelect={handleEffectSelect}
+        onGenerate={handleGenerate}
+        onReset={handleReset}
+      />
     </div>
   );
 };
