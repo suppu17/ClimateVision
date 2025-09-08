@@ -137,29 +137,23 @@ const VideoHero = ({
         <div className="absolute bottom-6 left-6 right-6">
           <div className="max-w-6xl mx-auto">
             {!selectedImage ? (
-              <div className="flex items-end justify-between gap-6">
-                {/* Left side - Title */}
-                <div className="flex-1">
-                  <div className="glass-card p-6 animate-fade-in">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                      Start Your Climate Journey
-                    </h2>
-                    <p className="text-white/80 text-lg">
-                      Upload an image and visualize climate impacts
-                    </p>
-                  </div>
+              <div className="glass-card p-6 animate-slide-up max-w-2xl mx-auto">
+                {/* Title and Subtitle */}
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    Start Your Climate Journey
+                  </h2>
+                  <p className="text-white/80 text-lg">
+                    Upload an image and visualize climate impacts
+                  </p>
                 </div>
                 
-                {/* Right side - Upload */}
-                <div className="flex-1">
-                  <div className="glass-card p-6 animate-slide-up">
-                    <ImageUpload 
-                      onImageSelect={onImageSelect}
-                      selectedImage={selectedImage}
-                      onClearImage={onClearImage}
-                    />
-                  </div>
-                </div>
+                {/* Upload Section */}
+                <ImageUpload 
+                  onImageSelect={onImageSelect}
+                  selectedImage={selectedImage}
+                  onClearImage={onClearImage}
+                />
               </div>
             ) : !generatedImage ? (
               <div className="glass-card p-6 animate-slide-up">
