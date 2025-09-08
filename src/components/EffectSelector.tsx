@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Wand2, Flame, TreePine } from "lucide-react";
+import { Bot, Wand2, Flame, TreePine, Droplets, Wind, Mountain, Zap, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,30 +20,31 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
   const [customEffect, setCustomEffect] = useState("");
   const [customSolution, setCustomSolution] = useState("");
   
-  // Quick effect suggestions
+  // Quick effect suggestions with elemental icons
   const effectSuggestions = [
-    "Wildfire spreading across the landscape",
-    "Severe flooding and water damage", 
-    "Air pollution and smog",
-    "Earthquake damage and ground cracks",
-    "Extreme storm and weather"
+    { icon: Flame, label: "Fire", effect: "Wildfire spreading across the landscape" },
+    { icon: Droplets, label: "Water", effect: "Severe flooding and water damage" },
+    { icon: Wind, label: "Air", effect: "Air pollution and smog" },
+    { icon: Mountain, label: "Earth", effect: "Earthquake damage and ground cracks" },
+    { icon: Zap, label: "Space", effect: "Extreme storm and weather" }
   ];
 
   const solutionSuggestions = [
-    "Fire brigade extinguishing forest fires with water and foam",
-    "Reforestation with lush green trees and vegetation",
-    "Solar panels and renewable energy infrastructure", 
-    "Wind turbines generating clean power",
-    "Water conservation and sustainable management"
+    "Plant trees",
+    "EV", 
+    "Renewable energy",
+    "Extinguisher",
+    "Water conservation"
   ];
 
-  const handleQuickSelect = (suggestion: string) => {
+  const handleQuickSelect = (suggestion: string | { effect: string }) => {
+    const effectText = typeof suggestion === 'string' ? suggestion : suggestion.effect;
     if (activeTab === "effects") {
-      setCustomEffect(suggestion);
-      onEffectSelect(suggestion, "effects");
+      setCustomEffect(effectText);
+      onEffectSelect(effectText, "effects");
     } else {
-      setCustomSolution(suggestion);
-      onEffectSelect(suggestion, "improvements");
+      setCustomSolution(effectText);
+      onEffectSelect(effectText, "improvements");
     }
   };
 
@@ -94,9 +95,6 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
 
         {/* Custom Input */}
         <div className="space-y-3">
-          <Label className="text-white text-sm">
-            {activeTab === "effects" ? "Describe the climate effect you want to visualize:" : "Describe the solution you want to show:"}
-          </Label>
           <Textarea
             placeholder={activeTab === "effects" ? "e.g., Wildfire spreading through forest with smoke and flames..." : "e.g., Fire brigade with trucks and water hoses extinguishing forest fires..."}
             value={activeTab === "effects" ? customEffect : customSolution}
@@ -109,15 +107,31 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         <div className="space-y-2">
           <Label className="text-white/80 text-xs">Quick suggestions:</Label>
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {(activeTab === "effects" ? effectSuggestions : solutionSuggestions).map((suggestion, index) => (
-              <button
-                key={index}
-                onClick={() => handleQuickSelect(suggestion)}
-                className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all whitespace-nowrap"
-              >
-                {suggestion}
-              </button>
-            ))}
+            {activeTab === "effects" ? (
+              effectSuggestions.map((suggestion, index) => {
+                const IconComponent = suggestion.icon;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickSelect(suggestion)}
+                    className="flex-shrink-0 flex flex-col items-center gap-1 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all"
+                  >
+                    <IconComponent className="h-6 w-6" />
+                    <span>{suggestion.label}</span>
+                  </button>
+                );
+              })
+            ) : (
+              solutionSuggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickSelect(suggestion)}
+                  className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all whitespace-nowrap"
+                >
+                  {suggestion}
+                </button>
+              ))
+            )}
           </div>
         </div>
 
@@ -166,9 +180,6 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         <TabsContent value="effects" className="space-y-4">
           <div className="space-y-4">
             <div>
-              <Label htmlFor="effect-input" className="text-foreground mb-2 block">
-                Describe the climate effect you want to visualize:
-              </Label>
               <Textarea
                 id="effect-input"
                 placeholder="e.g., Massive wildfire spreading through a dense forest with thick black smoke, orange flames, and ash falling from the sky..."
@@ -180,16 +191,20 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
             
             <div>
               <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {effectSuggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuickSelect(suggestion)}
-                    className="flex-shrink-0 p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all whitespace-nowrap"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {effectSuggestions.map((suggestion, index) => {
+                  const IconComponent = suggestion.icon;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickSelect(suggestion)}
+                      className="flex-shrink-0 flex flex-col items-center gap-2 p-4 rounded-lg glass-card hover:bg-muted/50 transition-all"
+                    >
+                      <IconComponent className="h-8 w-8 text-primary" />
+                      <span className="text-sm font-medium">{suggestion.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -198,9 +213,6 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         <TabsContent value="improvements" className="space-y-4">
           <div className="space-y-4">
             <div>
-              <Label htmlFor="solution-input" className="text-foreground mb-2 block">
-                Describe the solution you want to show:
-              </Label>
               <Textarea
                 id="solution-input"
                 placeholder="e.g., Fire brigade with multiple red fire trucks, firefighters in yellow suits spraying powerful water hoses, helicopters dropping water from above to extinguish forest fires..."
