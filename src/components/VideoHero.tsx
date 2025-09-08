@@ -107,6 +107,13 @@ const VideoHero = ({
               loop
               muted
               playsInline
+              preload="auto"
+              poster=""
+              style={{ 
+                filter: 'none',
+                imageRendering: 'crisp-edges',
+                objectFit: 'cover'
+              }}
             >
               <source src="https://cdn.midjourney.com/video/9d83f49d-2129-4a2f-9700-21dd20850194/1.mp4" type="video/mp4" />
             </video>
@@ -121,6 +128,12 @@ const VideoHero = ({
                 loop
                 muted
                 playsInline
+                preload="auto"
+                style={{ 
+                  filter: 'none',
+                  imageRendering: 'crisp-edges',
+                  objectFit: 'cover'
+                }}
                 className="w-full h-full object-cover transition-all duration-1000"
               />
             ) : (
