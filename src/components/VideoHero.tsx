@@ -108,7 +108,7 @@ const VideoHero = ({
               muted
               playsInline
             >
-              <source src="https://cdn.midjourney.com/video/7819b5ec-35f8-413c-beb9-4fa5b926074a/0.mp4" type="video/mp4" />
+              <source src="https://cdn.midjourney.com/video/9d83f49d-2129-4a2f-9700-21dd20850194/1.mp4" type="video/mp4" />
             </video>
           </>
         ) : (
