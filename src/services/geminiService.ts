@@ -45,6 +45,10 @@ const CLIMATE_EFFECTS: Record<string, ClimateEffect> = {
   "water-conservation": {
     id: "water-conservation",
     prompt: "Transform this landscape to showcase water conservation and sustainable water management. Add rainwater collection systems, restored wetlands, efficient irrigation, and natural water preservation methods that enhance the ecosystem."
+  },
+  extinguisher: {
+    id: "extinguisher",
+    prompt: "Transform this fire scene to show effective fire suppression and extinguishing. Add fire trucks with extended ladders, firefighters in action with hoses spraying water, fire retardant being dropped from aircraft, and the flames being gradually controlled and extinguished. Show smoke clearing and the fire being successfully suppressed with professional firefighting equipment and techniques."
   }
 };
 

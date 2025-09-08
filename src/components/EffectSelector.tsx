@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flame, Cloud, Droplets, Mountain, Zap, TreePine, Car, Sun, Wind, Waves } from "lucide-react";
+import { Flame, Cloud, Droplets, Mountain, Zap, TreePine, Car, Sun, Wind, Waves, ShieldX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,9 +75,16 @@ const improvements: Effect[] = [
   },
   {
     id: "wind-power",
-    name: "Extinguisher",
+    name: "Wind Power",
     description: "Add wind turbines for clean power generation",
     icon: <Wind className="h-5 w-5" />,
+    category: "improvements"
+  },
+  {
+    id: "extinguisher",
+    name: "Extinguisher",
+    description: "Show fire suppression and firefighting efforts",
+    icon: <ShieldX className="h-5 w-5" />,
     category: "improvements"
   },
   {

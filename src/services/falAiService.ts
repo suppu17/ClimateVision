@@ -1,9 +1,15 @@
 import { fal } from "@fal-ai/client";
 
+// Note: For production use, store API keys securely
+// For now, using a placeholder - users should provide their own FAL API key
+let falApiKey = localStorage.getItem('fal_api_key') || '';
+
 // Configure FAL AI client
-fal.config({
-  credentials: "AIzaSyCJsiyPgaI6V3EQpn35ipRAcjno1eSpGxY"
-});
+if (falApiKey) {
+  fal.config({
+    credentials: falApiKey
+  });
+}
 
 export interface VideoGenerationParams {
   imageUrl: string;
@@ -22,6 +28,17 @@ export interface GeneratedVideo {
 
 class FalAiService {
   async generateVideo(params: VideoGenerationParams): Promise<GeneratedVideo> {
+    const apiKey = localStorage.getItem('fal_api_key');
+    
+    if (!apiKey) {
+      throw new Error("FAL API key not configured. Please set up your API key in settings.");
+    }
+
+    // Configure FAL AI client with the stored API key
+    fal.config({
+      credentials: apiKey
+    });
+
     try {
       const result = await fal.subscribe("fal-ai/veo3/fast/image-to-video", {
         input: {
@@ -47,6 +64,9 @@ class FalAiService {
       };
     } catch (error) {
       console.error("Video generation failed:", error);
+      if (error instanceof Error && error.message.includes('Unauthorized')) {
+        throw new Error("Invalid FAL API key. Please check your API key configuration.");
+      }
       throw new Error("Failed to generate video. Please try again.");
     }
   }
@@ -62,7 +82,8 @@ class FalAiService {
       "extreme-weather": "Intense weather patterns emerge with strong winds, dramatic clouds, and severe atmospheric conditions",
       "sea-level-rise": "Ocean waters gradually rise, coastal areas flood, and waves crash over previously dry land",
       deforestation: "Trees fall, forest cover disappears, and the landscape transforms from lush green to barren ground",
-      desertification: "Fertile land transforms into desert, sand dunes form, and vegetation disappears in the expanding arid landscape"
+      desertification: "Fertile land transforms into desert, sand dunes form, and vegetation disappears in the expanding arid landscape",
+      extinguisher: "Fire trucks arrive on scene, firefighters deploy hoses spraying powerful water streams, aircraft drop fire retardant, flames are gradually suppressed and extinguished, smoke clears showing successful fire suppression"
     };
 
     return prompts[effectType as keyof typeof prompts] || 

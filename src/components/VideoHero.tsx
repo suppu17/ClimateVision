@@ -1,8 +1,10 @@
 import ImageUpload from "./ImageUpload";
 import EffectSelector from "./EffectSelector";
-import { Download, Share, RotateCcw, Play } from "lucide-react";
+import ApiKeyDialog from "./ApiKeyDialog";
+import { Download, Share, RotateCcw, Play, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useState } from "react";
 
 interface VideoHeroProps {
   selectedImage: string | null;
@@ -36,6 +38,7 @@ const VideoHero = ({
   onReset 
 }: VideoHeroProps) => {
   const { addNotification } = useNotifications();
+  const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
   
   const handleDownload = async () => {
     const contentToDownload = generatedVideo || generatedImage;
@@ -188,6 +191,14 @@ const VideoHero = ({
                       <Share className="h-4 w-4 mr-2" />
                       Share
                     </Button>
+                    <Button 
+                      onClick={() => setIsApiKeyDialogOpen(true)}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </Button>
                     {generatedImage && !generatedVideo && (
                       <Button 
                         onClick={onGenerateVideo}
@@ -212,6 +223,12 @@ const VideoHero = ({
           </div>
         </div>
       </div>
+
+      {/* API Key Configuration Dialog */}
+      <ApiKeyDialog 
+        open={isApiKeyDialogOpen} 
+        onOpenChange={setIsApiKeyDialogOpen} 
+      />
     </section>
   );
 };
