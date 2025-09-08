@@ -19,6 +19,7 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
   const [activeTab, setActiveTab] = useState<"effects" | "improvements">("effects");
   const [customEffect, setCustomEffect] = useState("");
   const [customSolution, setCustomSolution] = useState("");
+  const [elaborateInput, setElaborateInput] = useState("");
   
   // Quick effect suggestions with text labels
   const effectSuggestions = [
@@ -39,12 +40,19 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
 
   const handleQuickSelect = (suggestion: string | { effect: string }) => {
     const effectText = typeof suggestion === 'string' ? suggestion : suggestion.effect;
+    let finalPrompt = effectText;
+    
+    // Add elaborate input if provided
+    if (elaborateInput.trim()) {
+      finalPrompt += `. Additional details: ${elaborateInput.trim()}`;
+    }
+    
     if (activeTab === "effects") {
-      setCustomEffect(effectText);
-      onEffectSelect(effectText, "effects");
+      setCustomEffect(finalPrompt);
+      onEffectSelect(finalPrompt, "effects");
     } else {
-      setCustomSolution(effectText);
-      onEffectSelect(effectText, "improvements");
+      setCustomSolution(finalPrompt);
+      onEffectSelect(finalPrompt, "improvements");
     }
   };
 
@@ -91,6 +99,25 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
             <TreePine className="h-4 w-4 inline mr-2" />
             Solutions
           </button>
+        </div>
+
+        {/* Elaborate Input */}
+        <div className="space-y-2 mb-4">
+          <Label htmlFor="elaborate-input" className="text-white/90 text-sm">
+            Elaborate Input (Optional)
+          </Label>
+          <Textarea
+            id="elaborate-input"
+            placeholder={
+              activeTab === "effects" 
+                ? "Describe additional details about how you want to recreate this climate issue scenario..."
+                : "Describe how you want to address this issue with your chosen solution..."
+            }
+            value={elaborateInput}
+            onChange={(e) => setElaborateInput(e.target.value)}
+            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 resize-none"
+            rows={3}
+          />
         </div>
 
         {/* Effect/Solution Options */}
@@ -171,6 +198,21 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsList>
 
         <TabsContent value="effects" className="space-y-4">
+          {/* Elaborate Input for Effects */}
+          <div className="space-y-2">
+            <Label htmlFor="elaborate-input-effects" className="text-sm font-medium">
+              Elaborate Input (Optional)
+            </Label>
+            <Textarea
+              id="elaborate-input-effects"
+              placeholder="Describe additional details about how you want to recreate this climate issue scenario..."
+              value={elaborateInput}
+              onChange={(e) => setElaborateInput(e.target.value)}
+              className="min-h-[80px] resize-none"
+              rows={3}
+            />
+          </div>
+          
           <div className="grid grid-cols-5 gap-4">
             {effectSuggestions.map((suggestion, index) => (
               <button
@@ -190,6 +232,21 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsContent>
 
         <TabsContent value="improvements" className="space-y-4">
+          {/* Elaborate Input for Solutions */}
+          <div className="space-y-2">
+            <Label htmlFor="elaborate-input-solutions" className="text-sm font-medium">
+              Elaborate Input (Optional)
+            </Label>
+            <Textarea
+              id="elaborate-input-solutions"
+              placeholder="Describe how you want to address this issue with your chosen solution..."
+              value={elaborateInput}
+              onChange={(e) => setElaborateInput(e.target.value)}
+              className="min-h-[80px] resize-none"
+              rows={3}
+            />
+          </div>
+          
           <div className="grid grid-cols-5 gap-4">
             {solutionSuggestions.map((suggestion, index) => (
               <button
