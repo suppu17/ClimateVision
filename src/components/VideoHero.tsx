@@ -115,7 +115,7 @@ const VideoHero = ({
                 objectFit: 'cover'
               }}
             >
-              <source src="https://cdn.midjourney.com/video/9d83f49d-2129-4a2f-9700-21dd20850194/1.mp4" type="video/mp4" />
+              <source src="https://cdn.midjourney.com/video/ae3b755e-e526-4ef1-8168-4c68b97a3af1/0.mp4" type="video/mp4" />
             </video>
           </>
         ) : (
