@@ -20,13 +20,13 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
   const [customEffect, setCustomEffect] = useState("");
   const [customSolution, setCustomSolution] = useState("");
   
-  // Quick effect suggestions with elemental icons
+  // Quick effect suggestions with text labels
   const effectSuggestions = [
-    { icon: Flame, label: "Fire", effect: "Wildfire spreading across the landscape" },
-    { icon: Droplets, label: "Water", effect: "Severe flooding and water damage" },
-    { icon: Wind, label: "Air", effect: "Air pollution and smog" },
-    { icon: Mountain, label: "Earth", effect: "Earthquake damage and ground cracks" },
-    { icon: Zap, label: "Space", effect: "Extreme storm and weather" }
+    { label: "Fire", effect: "Wildfire spreading across the landscape" },
+    { label: "Dust/Smoke", effect: "Severe air pollution with dust and smoke" },
+    { label: "Flood", effect: "Severe flooding and water damage" },
+    { label: "Earthquake", effect: "Earthquake damage and ground cracks" },
+    { label: "Extreme weather", effect: "Extreme storm and weather conditions" }
   ];
 
   const solutionSuggestions = [
@@ -93,46 +93,29 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
           </button>
         </div>
 
-        {/* Custom Input */}
-        <div className="space-y-3">
-          <Textarea
-            placeholder={activeTab === "effects" ? "e.g., Wildfire spreading through forest with smoke and flames..." : "e.g., Fire brigade with trucks and water hoses extinguishing forest fires..."}
-            value={activeTab === "effects" ? customEffect : customSolution}
-            onChange={(e) => handleCustomInput(e.target.value)}
-            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 min-h-[80px]"
-          />
-        </div>
-
-        {/* Quick Suggestions */}
-        <div className="space-y-2">
-          <Label className="text-white/80 text-xs">Quick suggestions:</Label>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {activeTab === "effects" ? (
-              effectSuggestions.map((suggestion, index) => {
-                const IconComponent = suggestion.icon;
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleQuickSelect(suggestion)}
-                    className="flex-shrink-0 flex flex-col items-center gap-1 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all"
-                  >
-                    <IconComponent className="h-6 w-6" />
-                    <span>{suggestion.label}</span>
-                  </button>
-                );
-              })
-            ) : (
-              solutionSuggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleQuickSelect(suggestion)}
-                  className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all whitespace-nowrap"
-                >
-                  {suggestion}
-                </button>
-              ))
-            )}
-          </div>
+        {/* Effect/Solution Options */}
+        <div className="grid grid-cols-5 gap-3">
+          {activeTab === "effects" ? (
+            effectSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickSelect(suggestion)}
+                className="p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-sm transition-all text-center"
+              >
+                {suggestion.label}
+              </button>
+            ))
+          ) : (
+            solutionSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickSelect(suggestion)}
+                className="p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-sm transition-all text-center"
+              >
+                {suggestion}
+              </button>
+            ))
+          )}
         </div>
 
         {/* Generate Button */}
@@ -178,64 +161,30 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
         </TabsList>
 
         <TabsContent value="effects" className="space-y-4">
-          <div className="space-y-4">
-            <div>
-              <Textarea
-                id="effect-input"
-                placeholder="e.g., Massive wildfire spreading through a dense forest with thick black smoke, orange flames, and ash falling from the sky..."
-                value={customEffect}
-                onChange={(e) => handleCustomInput(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-            
-            <div>
-              <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                {effectSuggestions.map((suggestion, index) => {
-                  const IconComponent = suggestion.icon;
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleQuickSelect(suggestion)}
-                      className="flex-shrink-0 flex flex-col items-center gap-2 p-4 rounded-lg glass-card hover:bg-muted/50 transition-all"
-                    >
-                      <IconComponent className="h-8 w-8 text-primary" />
-                      <span className="text-sm font-medium">{suggestion.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+          <div className="grid grid-cols-5 gap-4">
+            {effectSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickSelect(suggestion)}
+                className="p-4 rounded-lg glass-card hover:bg-muted/50 transition-all text-center"
+              >
+                <span className="text-sm font-medium">{suggestion.label}</span>
+              </button>
+            ))}
           </div>
         </TabsContent>
 
         <TabsContent value="improvements" className="space-y-4">
-          <div className="space-y-4">
-            <div>
-              <Textarea
-                id="solution-input"
-                placeholder="e.g., Fire brigade with multiple red fire trucks, firefighters in yellow suits spraying powerful water hoses, helicopters dropping water from above to extinguish forest fires..."
-                value={customSolution}
-                onChange={(e) => handleCustomInput(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-            
-            <div>
-              <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {solutionSuggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuickSelect(suggestion)}
-                    className="flex-shrink-0 p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all whitespace-nowrap"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <div className="grid grid-cols-5 gap-4">
+            {solutionSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickSelect(suggestion)}
+                className="p-4 rounded-lg glass-card hover:bg-muted/50 transition-all text-center"
+              >
+                <span className="text-sm font-medium">{suggestion}</span>
+              </button>
+            ))}
           </div>
         </TabsContent>
       </Tabs>
