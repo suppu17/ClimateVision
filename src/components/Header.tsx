@@ -22,16 +22,16 @@ const Header = () => {
           <nav className="hidden md:flex items-center gap-6">
             <NotificationBell />
             <button 
-              onClick={() => setIsReportsOpen(true)}
-              className="text-white font-bold hover:text-white/90 transition-colors"
-            >
-              Reports
-            </button>
-            <button 
               onClick={() => setIsEcoReportOpen(true)}
               className="text-white font-bold hover:text-white/90 transition-colors"
             >
               EcoVoice
+            </button>
+            <button 
+              onClick={() => setIsReportsOpen(true)}
+              className="text-white font-bold hover:text-white/90 transition-colors"
+            >
+              Reports
             </button>
           </nav>
 
@@ -39,16 +39,16 @@ const Header = () => {
           <div className="md:hidden flex items-center gap-2">
             <NotificationBell />
             <button 
-              onClick={() => setIsReportsOpen(true)}
-              className="text-white font-bold hover:text-white/90 transition-colors text-sm"
-            >
-              Reports
-            </button>
-            <button 
               onClick={() => setIsEcoReportOpen(true)}
               className="text-white font-bold hover:text-white/90 transition-colors text-sm"
             >
               EcoVoice
+            </button>
+            <button 
+              onClick={() => setIsReportsOpen(true)}
+              className="text-white font-bold hover:text-white/90 transition-colors text-sm"
+            >
+              Reports
             </button>
           </div>
         </div>
