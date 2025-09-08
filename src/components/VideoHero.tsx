@@ -121,45 +121,8 @@ const VideoHero = ({
           </div>
         )}
 
-        {/* Generated Image Actions (top center when image is generated) */}
-        {generatedImage && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="glass-card p-6 animate-fade-in">
-              <div className="space-y-4 text-center">
-                <p className="text-primary-foreground/90">
-                  Climate effect visualization complete! 
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Button 
-                    onClick={handleDownload}
-                    variant="outline"
-                    className="glass-button"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                  <Button 
-                    onClick={handleShare}
-                    variant="outline"
-                    className="glass-button"
-                  >
-                    <Share className="h-4 w-4 mr-2" />
-                    Share
-                  </Button>
-                  <Button 
-                    onClick={onReset}
-                    className="bg-gradient-nature text-primary-foreground hover:opacity-90"
-                  >
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    Try Another Effect
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* Bottom Section - Upload or Effects */}
+        {/* Bottom Section - Upload, Effects, or Results */}
         <div className="absolute bottom-6 left-6 right-6">
           <div className="max-w-4xl mx-auto">
             {!selectedImage ? (
@@ -182,7 +145,40 @@ const VideoHero = ({
                   minimal={true}
                 />
               </div>
-            ) : null}
+            ) : (
+              <div className="glass-card p-6 animate-slide-up">
+                <div className="space-y-4 text-center">
+                  <p className="text-primary-foreground/90 text-lg font-medium">
+                    Climate effect visualization complete! 
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button 
+                      onClick={handleDownload}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                    <Button 
+                      onClick={handleShare}
+                      variant="outline"
+                      className="glass-button"
+                    >
+                      <Share className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={onReset}
+                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Try Another Effect
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
