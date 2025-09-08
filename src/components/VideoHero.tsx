@@ -1,51 +1,61 @@
 import ImageUpload from "./ImageUpload";
 import EffectSelector from "./EffectSelector";
-import { Download, Share, RotateCcw } from "lucide-react";
+import { Download, Share, RotateCcw, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface VideoHeroProps {
   selectedImage: string | null;
   generatedImage: string | null;
+  generatedVideo: string | null;
   selectedEffect: string | null;
   effectCategory: "effects" | "improvements" | null;
   isGenerating: boolean;
+  isGeneratingVideo: boolean;
   onImageSelect: (file: File) => void;
   onClearImage: () => void;
   onEffectSelect: (effectId: string, category: "effects" | "improvements") => void;
   onGenerate: () => void;
+  onGenerateVideo: () => void;
   onReset: () => void;
 }
 
 const VideoHero = ({ 
   selectedImage, 
-  generatedImage, 
+  generatedImage,
+  generatedVideo,
   selectedEffect, 
   effectCategory, 
   isGenerating,
+  isGeneratingVideo,
   onImageSelect,
   onClearImage,
   onEffectSelect,
   onGenerate,
+  onGenerateVideo,
   onReset 
 }: VideoHeroProps) => {
   
   const handleDownload = async () => {
-    if (!generatedImage) return;
+    const contentToDownload = generatedVideo || generatedImage;
+    if (!contentToDownload) return;
+    
     try {
-      const response = await fetch(generatedImage);
+      const response = await fetch(contentToDownload);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `climate-effect-${selectedEffect}-${Date.now()}.png`;
+      const fileExtension = generatedVideo ? 'mp4' : 'png';
+      const fileType = generatedVideo ? 'video' : 'image';
+      link.download = `climate-${fileType}-${selectedEffect}-${Date.now()}.${fileExtension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success("Image downloaded successfully!");
+      toast.success(`${fileType} downloaded successfully!`);
     } catch (error) {
-      toast.error("Failed to download image");
+      toast.error(`Failed to download ${generatedVideo ? 'video' : 'image'}`);
     }
   };
 
@@ -73,9 +83,9 @@ const VideoHero = ({
     }
   };
 
-  // Determine which image to show as backdrop
-  const backdropImage = generatedImage || selectedImage;
-  const showVideo = !backdropImage;
+  // Determine which content to show as backdrop
+  const backdropContent = generatedVideo || generatedImage || selectedImage;
+  const showVideo = !backdropContent;
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -95,13 +105,24 @@ const VideoHero = ({
             </video>
           </>
         ) : (
-          // Show uploaded or generated image as backdrop
+          // Show uploaded or generated content as backdrop
           <>
-            <img 
-              src={backdropImage} 
-              alt="Climate visualization backdrop" 
-              className="w-full h-full object-cover transition-all duration-1000"
-            />
+            {generatedVideo ? (
+              <video 
+                src={generatedVideo} 
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover transition-all duration-1000"
+              />
+            ) : (
+              <img 
+                src={backdropContent} 
+                alt="Climate visualization backdrop" 
+                className="w-full h-full object-cover transition-all duration-1000"
+              />
+            )}
           </>
         )}
       </div>
@@ -145,11 +166,11 @@ const VideoHero = ({
                   minimal={true}
                 />
               </div>
-            ) : (
+            ) : (generatedImage || generatedVideo) ? (
               <div className="glass-card p-6 animate-slide-up">
                 <div className="space-y-4 text-center">
                   <p className="text-white/90 text-lg font-medium">
-                    Climate effect visualization complete! 
+                    {generatedVideo ? "Climate video complete!" : "Climate effect visualization complete!"} 
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
                     <Button 
@@ -158,7 +179,7 @@ const VideoHero = ({
                       className="glass-button"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Download
+                      Download {generatedVideo ? "Video" : "Image"}
                     </Button>
                     <Button 
                       onClick={handleShare}
@@ -168,6 +189,16 @@ const VideoHero = ({
                       <Share className="h-4 w-4 mr-2" />
                       Share
                     </Button>
+                    {generatedImage && !generatedVideo && (
+                      <Button 
+                        onClick={onGenerateVideo}
+                        disabled={isGeneratingVideo}
+                        className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                      >
+                        <Play className="h-4 w-4 mr-2" />
+                        {isGeneratingVideo ? "Generating Video..." : "Generate Video"}
+                      </Button>
+                    )}
                     <Button 
                       onClick={onReset}
                       className="bg-gradient-nature text-primary-foreground hover:opacity-90"
@@ -178,7 +209,7 @@ const VideoHero = ({
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
 import { geminiService } from "@/services/geminiService";
+import { falAiService } from "@/services/falAiService";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -12,6 +13,8 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showUploadSection, setShowUploadSection] = useState(false);
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+  const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
 
   const handleImageSelect = (file: File) => {
     setSelectedFile(file);
@@ -72,8 +75,41 @@ const Index = () => {
     }
   };
 
+  const handleGenerateVideo = async () => {
+    if (!generatedImage || !selectedEffect) {
+      toast.error("Please generate an image first.");
+      return;
+    }
+
+    setIsGeneratingVideo(true);
+    
+    try {
+      const prompt = falAiService.createClimatePrompt(selectedEffect);
+      const result = await falAiService.generateVideo({
+        imageUrl: generatedImage,
+        prompt,
+        duration: "8s",
+        generateAudio: true,
+        resolution: "720p"
+      });
+      
+      setGeneratedVideo(result.url);
+      toast.success("Climate video generated successfully!");
+    } catch (error) {
+      console.error("Video generation error:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to generate climate video. Please try again.");
+      }
+    } finally {
+      setIsGeneratingVideo(false);
+    }
+  };
+
   const handleReset = () => {
     setGeneratedImage(null);
+    setGeneratedVideo(null);
     setSelectedEffect(null);
     setEffectCategory(null);
     toast.info("Ready for another climate effect!");
@@ -87,13 +123,16 @@ const Index = () => {
       <VideoHero 
         selectedImage={selectedImage}
         generatedImage={generatedImage}
+        generatedVideo={generatedVideo}
         selectedEffect={selectedEffect}
         effectCategory={effectCategory}
         isGenerating={isGenerating}
+        isGeneratingVideo={isGeneratingVideo}
         onImageSelect={handleImageSelect}
         onClearImage={handleClearImage}
         onEffectSelect={handleEffectSelect}
         onGenerate={handleGenerate}
+        onGenerateVideo={handleGenerateVideo}
         onReset={handleReset}
       />
     </div>
