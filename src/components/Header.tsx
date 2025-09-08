@@ -20,10 +20,9 @@ const Header = () => {
           <nav className="hidden md:flex items-center gap-6">
             <button 
               onClick={() => setIsEcoReportOpen(true)}
-              className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors"
+              className="text-white font-bold hover:text-white/90 transition-colors"
             >
-              <Volume2 className="h-4 w-4" />
-              EcoReport
+              EcoVoice
             </button>
             <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
               <Phone className="h-4 w-4" />
