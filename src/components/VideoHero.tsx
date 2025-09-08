@@ -60,12 +60,15 @@ const VideoHero = ({
   };
 
   const handleShare = async () => {
-    if (!generatedImage) return;
+    const contentToShare = generatedVideo || generatedImage;
+    if (!contentToShare) return;
     if (navigator.share) {
       try {
-        const response = await fetch(generatedImage);
+        const response = await fetch(contentToShare);
         const blob = await response.blob();
-        const file = new File([blob], `climate-effect-${selectedEffect}.png`, { type: 'image/png' });
+        const fileExtension = generatedVideo ? 'mp4' : 'png';
+        const fileType = generatedVideo ? 'video/mp4' : 'image/png';
+        const file = new File([blob], `climate-effect-${selectedEffect}.${fileExtension}`, { type: fileType });
         
         await navigator.share({
           title: 'Climate Impact Visualization',
@@ -129,31 +132,32 @@ const VideoHero = ({
 
       {/* Fixed Content Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col">
-        {/* Top Section - Title (only when no image uploaded) */}
-        {!selectedImage && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center max-w-4xl mx-auto px-6">
-              <div className="glass-card p-8 md:p-12 animate-fade-in">
-                <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-6">
-                  Start Your Climate Journey
-                </h2>
-              </div>
-            </div>
-          </div>
-        )}
-
-
         {/* Bottom Section - Upload, Effects, or Results */}
         <div className="absolute bottom-6 left-6 right-6">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             {!selectedImage ? (
-              <div className="glass-card p-6 animate-slide-up">
-                <div className="max-w-lg mx-auto">
-                  <ImageUpload 
-                    onImageSelect={onImageSelect}
-                    selectedImage={selectedImage}
-                    onClearImage={onClearImage}
-                  />
+              <div className="flex items-end justify-between gap-6">
+                {/* Left side - Title */}
+                <div className="flex-1">
+                  <div className="glass-card p-6 animate-fade-in">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                      Start Your Climate Journey
+                    </h2>
+                    <p className="text-white/80 text-lg">
+                      Upload an image and visualize climate impacts
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Right side - Upload */}
+                <div className="flex-1">
+                  <div className="glass-card p-6 animate-slide-up">
+                    <ImageUpload 
+                      onImageSelect={onImageSelect}
+                      selectedImage={selectedImage}
+                      onClearImage={onClearImage}
+                    />
+                  </div>
                 </div>
               </div>
             ) : !generatedImage ? (

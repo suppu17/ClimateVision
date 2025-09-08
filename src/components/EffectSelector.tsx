@@ -3,6 +3,7 @@ import { Flame, Cloud, Droplets, Mountain, Zap, TreePine, Car, Sun, Wind, Waves 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sparkles, Bot } from "lucide-react";
 
 interface Effect {
   id: string;
@@ -98,6 +99,78 @@ interface EffectSelectorProps {
 
 const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerating, minimal = false }: EffectSelectorProps) => {
   const [activeTab, setActiveTab] = useState<"effects" | "improvements">("effects");
+  
+  const currentEffects = activeTab === "effects" ? climateEffects : improvements;
+
+  if (minimal) {
+    return (
+      <div className="space-y-4">
+        {/* Tab Selector */}
+        <div className="flex p-1 bg-background/20 backdrop-blur-sm rounded-full border border-white/20">
+          <button
+            onClick={() => setActiveTab("effects")}
+            className={cn(
+              "flex-1 px-4 py-2 text-sm font-medium rounded-full transition-all",
+              activeTab === "effects"
+                ? "bg-red-500/80 text-white shadow-sm"
+                : "text-white/70 hover:text-white"
+            )}
+          >
+            Climate Effects
+          </button>
+          <button
+            onClick={() => setActiveTab("improvements")}
+            className={cn(
+              "flex-1 px-4 py-2 text-sm font-medium rounded-full transition-all",
+              activeTab === "improvements"
+                ? "bg-green-500/80 text-white shadow-sm"
+                : "text-white/70 hover:text-white"
+            )}
+          >
+            Solutions
+          </button>
+        </div>
+
+        {/* Effects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          {currentEffects.map((effect) => (
+            <button
+              key={effect.id}
+              onClick={() => onEffectSelect(effect.id, activeTab)}
+              className={cn(
+                "flex items-center gap-2 p-3 rounded-xl transition-all text-left",
+                "border border-white/20 bg-white/10 hover:bg-white/20",
+                selectedEffect === effect.id
+                  ? "border-white/40 bg-white/20 shadow-md"
+                  : ""
+              )}
+            >
+              <div className="text-red-400 flex-shrink-0">
+                {effect.icon}
+              </div>
+              <span className="text-white text-sm font-medium truncate">
+                {effect.name}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Fixed Generate Button Container */}
+        <div className="min-h-[56px] flex items-center justify-center">
+          {selectedEffect && (
+            <Button
+              onClick={onGenerate}
+              disabled={isGenerating}
+              className="bg-gradient-nature text-white hover:opacity-90 px-8 py-3 rounded-full font-medium transition-all animate-fade-in"
+            >
+              <Bot className="h-4 w-4 mr-2" />
+              {isGenerating ? "Generating Climate Impact..." : "Generate Climate Impact"}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const EffectCard = ({ effect }: { effect: Effect }) => (
     <div
