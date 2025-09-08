@@ -85,15 +85,15 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
-        <DialogHeader className="border-b border-slate-700 pb-4">
-          <div className="flex items-center gap-2 text-amber-500">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-card bg-card/95 backdrop-blur-xl border-border">
+        <DialogHeader className="border-b border-border pb-4">
+          <div className="flex items-center gap-2 text-primary">
             <AlertTriangle className="h-5 w-5" />
-            <DialogTitle className="text-xl font-bold text-white">
+            <DialogTitle className="text-xl font-bold text-foreground">
               EcoVoice Environmental Report
             </DialogTitle>
           </div>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-muted-foreground">
             Report environmental violations to help protect our planet and communities
           </DialogDescription>
         </DialogHeader>
