@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
 import ImageUpload from "@/components/ImageUpload";
 import EffectSelector from "@/components/EffectSelector";
-import ApiKeyInput from "@/components/ApiKeyInput";
 import ResultComparison from "@/components/ResultComparison";
 import { geminiService } from "@/services/geminiService";
 import { toast } from "sonner";
@@ -16,7 +15,6 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showUploadSection, setShowUploadSection] = useState(false);
-  const [isApiConfigured, setIsApiConfigured] = useState(geminiService.isConfigured());
 
   const handleImageSelect = (file: File) => {
     setSelectedFile(file);
@@ -40,19 +38,9 @@ const Index = () => {
     toast.success(`Selected ${effectId} effect. Ready to generate!`);
   };
 
-  const handleApiKeySet = (apiKey: string) => {
-    geminiService.setApiKey(apiKey);
-    setIsApiConfigured(true);
-  };
-
   const handleGenerate = async () => {
     if (!selectedFile || !selectedEffect) {
       toast.error("Please upload an image and select an effect first.");
-      return;
-    }
-
-    if (!isApiConfigured) {
-      toast.error("Please configure your Gemini API key first.");
       return;
     }
 
@@ -114,41 +102,29 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-16 space-y-12">
-        {/* API Key Configuration */}
-        {!isApiConfigured && (
-          <section className="animate-fade-in">
-            <ApiKeyInput 
-              onApiKeySet={handleApiKeySet}
-              isConfigured={isApiConfigured}
-            />
-          </section>
-        )}
-
         {/* Upload Section */}
-        {isApiConfigured && (
-          <section id="upload-section" className="animate-fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-4">
-                Start Your Climate Journey
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Upload an image of nature and explore how climate change impacts our environment, 
-                or discover solutions that can make a difference.
-              </p>
-            </div>
+        <section id="upload-section" className="animate-fade-in">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Start Your Climate Journey
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Upload an image of nature and explore how climate change impacts our environment, 
+              or discover solutions that can make a difference.
+            </p>
+          </div>
 
-            <div className="max-w-2xl mx-auto">
-              <ImageUpload 
-                onImageSelect={handleImageSelect}
-                selectedImage={selectedImage}
-                onClearImage={handleClearImage}
-              />
-            </div>
-          </section>
-        )}
+          <div className="max-w-2xl mx-auto">
+            <ImageUpload 
+              onImageSelect={handleImageSelect}
+              selectedImage={selectedImage}
+              onClearImage={handleClearImage}
+            />
+          </div>
+        </section>
 
         {/* Effect Selection */}
-        {selectedImage && isApiConfigured && (
+        {selectedImage && (
           <section className="animate-slide-up">
             <div className="max-w-4xl mx-auto">
               <EffectSelector

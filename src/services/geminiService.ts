@@ -49,18 +49,11 @@ const CLIMATE_EFFECTS: Record<string, ClimateEffect> = {
 };
 
 export class GeminiClimateService {
-  private ai: GoogleGenAI | null = null;
-  private apiKey: string | null = null;
+  private ai: GoogleGenAI;
+  private apiKey: string = "AIzaSyCJsiyPgaI6V3EQpn35ipRAcjno1eSpGxY";
 
-  constructor(apiKey?: string) {
-    if (apiKey) {
-      this.setApiKey(apiKey);
-    }
-  }
-
-  setApiKey(apiKey: string) {
-    this.apiKey = apiKey;
-    this.ai = new GoogleGenAI({ apiKey });
+  constructor() {
+    this.ai = new GoogleGenAI({ apiKey: this.apiKey });
   }
 
   async generateClimateEffect(
@@ -68,9 +61,6 @@ export class GeminiClimateService {
     effectId: string,
     customPrompt?: string
   ): Promise<{ imageData: string; description: string }> {
-    if (!this.ai || !this.apiKey) {
-      throw new Error("Gemini API key not configured. Please provide your API key.");
-    }
 
     const effect = CLIMATE_EFFECTS[effectId];
     if (!effect && !customPrompt) {
@@ -143,7 +133,7 @@ export class GeminiClimateService {
   }
 
   isConfigured(): boolean {
-    return this.ai !== null && this.apiKey !== null;
+    return true;
   }
 }
 
