@@ -127,7 +127,9 @@ const VideoHero = ({
             style={{ 
               filter: 'none',
               imageRendering: 'crisp-edges',
-              objectFit: 'cover'
+              objectFit: 'cover',
+              transform: 'scale(0.8)',
+              transformOrigin: 'center center'
             }}
           />
         ) : generatedVideo ? (
