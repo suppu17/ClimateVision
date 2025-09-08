@@ -148,7 +148,7 @@ const VideoHero = ({
             ) : (
               <div className="glass-card p-6 animate-slide-up">
                 <div className="space-y-4 text-center">
-                  <p className="text-primary-foreground/90 text-lg font-medium">
+                  <p className="text-white/90 text-lg font-medium">
                     Climate effect visualization complete! 
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">

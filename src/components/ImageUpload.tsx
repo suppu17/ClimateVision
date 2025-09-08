@@ -93,13 +93,13 @@ const ImageUpload = ({ onImageSelect, selectedImage, onClearImage }: ImageUpload
         </div>
         
         <div className="text-left flex-1">
-          <h3 className="text-base font-semibold text-foreground mb-1">
+          <h3 className="text-base font-semibold text-white mb-1">
             Upload Nature Image
           </h3>
-          <p className="text-sm text-muted-foreground mb-1">
+          <p className="text-sm text-white/80 mb-1">
             Drop your image here or click to browse
           </p>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-white/60">
             <ImageIcon className="h-3 w-3" />
             JPG, PNG, WEBP up to 10MB
           </div>

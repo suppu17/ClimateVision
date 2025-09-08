@@ -42,15 +42,15 @@ All colors MUST be HSL.
     --input: 120 15% 92%;
     --ring: 140 60% 35%;
 
-    /* Glass morphism variables - Black Glass Effect */
-    --glass-bg: 0 0% 0%;
-    --glass-border: 0 0% 20%;
-    --glass-shadow: 0 0% 0%;
+    /* Glass morphism variables - Matte Finish */
+    --glass-bg: 120 10% 95%;
+    --glass-border: 120 20% 85%;
+    --glass-shadow: 120 10% 20%;
 
     /* Gradients */
     --gradient-nature: linear-gradient(135deg, hsl(140 60% 45%), hsl(100 50% 55%));
-    /* Gradients - Black Glass Effect */
-    --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg) / 0.7), hsl(var(--glass-bg) / 0.3));
+    /* Gradients - Matte Glass Effect */
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.2), hsl(0 0% 100% / 0.1));
     --gradient-hero: linear-gradient(135deg, hsl(140 40% 25% / 0.8), hsl(100 30% 30% / 0.6));
 
     /* Shadows */
@@ -112,15 +112,15 @@ All colors MUST be HSL.
     --input: 120 15% 20%;
     --ring: 140 70% 55%;
 
-    /* Dark glass morphism - Enhanced Black Glass */
-    --glass-bg: 0 0% 5%;
-    --glass-border: 0 0% 25%;
-    --glass-shadow: 0 0% 0%;
+    /* Dark glass morphism - Matte Dark */
+    --glass-bg: 120 10% 15%;
+    --glass-border: 120 15% 30%;
+    --glass-shadow: 120 5% 5%;
 
     /* Dark gradients */
     --gradient-nature: linear-gradient(135deg, hsl(140 50% 35%), hsl(100 40% 40%));
-    /* Dark gradients - Enhanced Black Glass */
-    --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg) / 0.8), hsl(var(--glass-bg) / 0.4));
+    /* Dark gradients - Matte Dark Glass */
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
     --gradient-hero: linear-gradient(135deg, hsl(140 30% 15% / 0.9), hsl(100 25% 20% / 0.7));
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
