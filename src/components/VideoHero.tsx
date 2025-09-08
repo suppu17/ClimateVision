@@ -224,14 +224,16 @@ const VideoHero = ({
                     <Button 
                       onClick={onGenerateVideo}
                       disabled={isGeneratingVideo}
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90 disabled:opacity-50"
+                      variant="outline"
+                      className="glass-button"
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      {isGeneratingVideo ? "Generating Solution Video..." : "Generate Solution Video"}
+                      {isGeneratingVideo ? "Generating Video..." : "Generate Video"}
                     </Button>
                     <Button 
                       onClick={onReset}
-                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                      variant="outline"
+                      className="glass-button"
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Try Another Effect
