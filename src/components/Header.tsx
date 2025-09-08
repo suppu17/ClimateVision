@@ -12,8 +12,8 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Leaf className="h-8 w-8 text-nav-blue" />
-            <span className="text-xl font-bold text-nav-blue">ClimateVision</span>
+            <Leaf className="h-8 w-8 text-white" />
+            <span className="text-xl font-bold text-white">ClimateVision</span>
           </div>
 
           {/* Navigation */}
@@ -21,7 +21,7 @@ const Header = () => {
             <NotificationBell />
             <button 
               onClick={() => setIsEcoReportOpen(true)}
-              className="text-nav-blue font-bold hover:text-nav-blue/90 transition-colors"
+              className="text-white font-bold hover:text-white/90 transition-colors"
             >
               EcoVoice
             </button>
@@ -32,7 +32,7 @@ const Header = () => {
             <NotificationBell />
             <button 
               onClick={() => setIsEcoReportOpen(true)}
-              className="text-nav-blue font-bold hover:text-nav-blue/90 transition-colors text-sm"
+              className="text-white font-bold hover:text-white/90 transition-colors text-sm"
             >
               EcoVoice
             </button>
