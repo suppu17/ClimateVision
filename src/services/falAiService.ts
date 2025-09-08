@@ -21,10 +21,10 @@ class FalAiService {
 
   async generateVideo(params: VideoGenerationParams): Promise<GeneratedVideo> {
     try {
-      console.log('Generating video with FAL AI...');
+      console.log('Generating video with FAL AI...', { imageUrl: params.imageUrl, prompt: params.prompt });
       
-      // Direct FAL API call with the provided API key
-      const response = await fetch('https://fal.run/fal-ai/stable-video-diffusion', {
+      // Use the correct FAL API endpoint
+      const response = await fetch('https://fal.run/fal-ai/stable-video', {
         method: 'POST',
         headers: {
           'Authorization': `Key ${this.apiKey}`,
@@ -39,11 +39,16 @@ class FalAiService {
         }),
       });
 
+      console.log('FAL API response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`FAL API error: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('FAL API error response:', errorText);
+        throw new Error(`FAL API error: ${response.statusText} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('FAL API result:', result);
       
       if (result.video && result.video.url) {
         return {
