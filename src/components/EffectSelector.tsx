@@ -100,7 +100,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
               <button
                 key={index}
                 onClick={() => handleQuickSelect(suggestion)}
-                className="p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-sm transition-all text-center"
+                className={cn(
+                  "p-3 rounded-lg border text-sm transition-all text-center",
+                  selectedEffect === suggestion.effect
+                    ? "bg-red-500/80 border-red-400/50 text-white shadow-lg"
+                    : "bg-white/5 hover:bg-white/10 border-white/10 text-white/80"
+                )}
               >
                 {suggestion.label}
               </button>
@@ -110,7 +115,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
               <button
                 key={index}
                 onClick={() => handleQuickSelect(suggestion)}
-                className="p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-sm transition-all text-center"
+                className={cn(
+                  "p-3 rounded-lg border text-sm transition-all text-center",
+                  selectedEffect === suggestion
+                    ? "bg-green-500/80 border-green-400/50 text-white shadow-lg"
+                    : "bg-white/5 hover:bg-white/10 border-white/10 text-white/80"
+                )}
               >
                 {suggestion}
               </button>
@@ -166,7 +176,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
               <button
                 key={index}
                 onClick={() => handleQuickSelect(suggestion)}
-                className="p-4 rounded-lg glass-card hover:bg-muted/50 transition-all text-center"
+                className={cn(
+                  "p-4 rounded-lg border transition-all text-center",
+                  selectedEffect === suggestion.effect
+                    ? "bg-destructive/20 border-destructive/50 text-destructive shadow-lg"
+                    : "glass-card hover:bg-muted/50 border-transparent"
+                )}
               >
                 <span className="text-sm font-medium">{suggestion.label}</span>
               </button>
@@ -180,7 +195,12 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
               <button
                 key={index}
                 onClick={() => handleQuickSelect(suggestion)}
-                className="p-4 rounded-lg glass-card hover:bg-muted/50 transition-all text-center"
+                className={cn(
+                  "p-4 rounded-lg border transition-all text-center",
+                  selectedEffect === suggestion
+                    ? "bg-primary/20 border-primary/50 text-primary shadow-lg"
+                    : "glass-card hover:bg-muted/50 border-transparent"
+                )}
               >
                 <span className="text-sm font-medium">{suggestion}</span>
               </button>
