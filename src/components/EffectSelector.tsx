@@ -16,7 +16,7 @@ interface Effect {
 const climateEffects: Effect[] = [
   {
     id: "wildfire",
-    name: "Wildfire",
+    name: "Fire",
     description: "Show the impact of wildfires on natural landscapes",
     icon: <Flame className="h-5 w-5" />,
     category: "effects"
@@ -68,14 +68,14 @@ const improvements: Effect[] = [
   },
   {
     id: "solar-energy",
-    name: "Solar Panels",
+    name: "Renewable energy",
     description: "Integrate renewable energy infrastructure",
     icon: <Sun className="h-5 w-5" />,
     category: "improvements"
   },
   {
     id: "wind-power",
-    name: "Wind Energy",
+    name: "Extinguisher",
     description: "Add wind turbines for clean power generation",
     icon: <Wind className="h-5 w-5" />,
     category: "improvements"
