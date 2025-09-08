@@ -17,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, FileText, MapPin, User, X } from "lucide-react";
+import { AlertTriangle, FileText, MapPin, User, X, Upload, Image } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface EcoReportDialogProps {
   open: boolean;
@@ -27,6 +28,9 @@ interface EcoReportDialogProps {
 
 const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
   const { toast } = useToast();
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     violationType: "",
     severityLevel: "",
@@ -41,7 +45,49 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
     phoneNumber: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageRemove = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('report-images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        return null;
+      }
+
+      const { data } = supabase.storage
+        .from('report-images')
+        .getPublicUrl(fileName);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -56,27 +102,76 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
       return;
     }
 
-    // Submit logic would go here
-    toast({
-      title: "Report Submitted",
-      description: "Your environmental report has been forwarded to relevant authorities.",
-    });
-    
-    // Reset form and close dialog
-    setFormData({
-      violationType: "",
-      severityLevel: "",
-      pollutant: "",
-      location: "",
-      dateOfIncident: "",
-      timeOfIncident: "",
-      description: "",
-      additionalInfo: "",
-      reporterName: "",
-      email: "",
-      phoneNumber: "",
-    });
-    onOpenChange(false);
+    setIsSubmitting(true);
+
+    try {
+      // Upload image if selected
+      let imageUrl = null;
+      if (selectedImage) {
+        imageUrl = await uploadImage(selectedImage);
+        if (!imageUrl) {
+          toast({
+            title: "Image Upload Failed",
+            description: "Failed to upload image. Report will be saved without image.",
+          });
+        }
+      }
+
+      // Save report to database
+      const { error } = await supabase
+        .from('reports')
+        .insert({
+          violation_type: formData.violationType,
+          location: formData.location,
+          description: formData.description,
+          reporter_name: formData.reporterName,
+          reporter_email: formData.email,
+          reporter_phone: formData.phoneNumber || null,
+          image_url: imageUrl,
+        });
+
+      if (error) {
+        console.error('Error saving report:', error);
+        toast({
+          title: "Submission Failed",
+          description: "Failed to save your report. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Report Submitted",
+        description: "Your environmental report has been saved and will be reviewed by authorities.",
+      });
+      
+      // Reset form and close dialog
+      setFormData({
+        violationType: "",
+        severityLevel: "",
+        pollutant: "",
+        location: "",
+        dateOfIncident: "",
+        timeOfIncident: "",
+        description: "",
+        additionalInfo: "",
+        reporterName: "",
+        email: "",
+        phoneNumber: "",
+      });
+      setSelectedImage(null);
+      setImagePreview(null);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      toast({
+        title: "Submission Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -224,6 +319,56 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
                 className="bg-teal-700 border-teal-500 text-white placeholder:text-white/60 min-h-[100px]"
               />
             </div>
+
+            {/* Image Upload Section */}
+            <div className="space-y-2">
+              <Label className="text-white">Evidence Photo (Optional)</Label>
+              {imagePreview ? (
+                <div className="relative">
+                  <img 
+                    src={imagePreview} 
+                    alt="Evidence preview" 
+                    className="w-full max-h-48 object-cover rounded-lg border-2 border-teal-500"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={handleImageRemove}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-teal-500 rounded-lg p-6 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <Image className="h-8 w-8 text-teal-300" />
+                    <div className="text-white/80">
+                      <p className="text-sm">Upload evidence photo</p>
+                      <p className="text-xs text-white/60">JPG, PNG up to 10MB</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="bg-teal-600 border-teal-500 text-white hover:bg-teal-700"
+                      onClick={() => document.getElementById('image-upload')?.click()}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Choose File
+                    </Button>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Additional Information */}
@@ -311,9 +456,10 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
             </Button>
             <Button
               type="submit"
-              className="bg-teal-600 hover:bg-teal-700 text-white"
+              disabled={isSubmitting}
+              className="bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-50"
             >
-              Submit Report
+              {isSubmitting ? "Submitting..." : "Submit Report"}
             </Button>
           </div>
         </form>
