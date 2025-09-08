@@ -143,6 +143,12 @@ const IndexContent = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
+        
+        // Check if this is a specific configuration error
+        if (error.message?.includes('FAL API key not configured')) {
+          throw new Error('FAL API key is not configured. Please add your FAL API key to Supabase secrets.');
+        }
+        
         throw error;
       }
 
@@ -154,6 +160,10 @@ const IndexContent = () => {
         addNotification("success", "Video showing climate solution generated successfully!");
       } else {
         console.error('No videoUrl in response:', data);
+        // Check if there's a specific error step
+        if (data?.error) {
+          throw new Error(`${data.error} (Step: ${data.step || 'unknown'})`);
+        }
         throw new Error("No video URL returned from generation service");
       }
 

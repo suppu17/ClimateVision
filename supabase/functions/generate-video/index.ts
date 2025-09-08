@@ -7,17 +7,57 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  console.log('=== EDGE FUNCTION STARTED ===')
+  
   if (req.method === 'OPTIONS') {
+    console.log('OPTIONS request received')
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
     console.log('=== VIDEO GENERATION REQUEST START ===')
     console.log('Request method:', req.method)
-    console.log('Request headers:', Object.fromEntries(req.headers.entries()))
+    console.log('Request URL:', req.url)
     
-    const requestBody = await req.json()
-    console.log('Request body keys:', Object.keys(requestBody))
+    // Check if FAL API key exists first
+    const FAL_API_KEY = Deno.env.get('FAL_API_KEY')
+    console.log('FAL_API_KEY exists:', !!FAL_API_KEY)
+    console.log('FAL_API_KEY length:', FAL_API_KEY?.length || 0)
+    
+    if (!FAL_API_KEY) {
+      console.error('FAL API key not configured in secrets')
+      return new Response(
+        JSON.stringify({ 
+          error: 'FAL API key not configured. Please add FAL_API_KEY to your Supabase secrets.',
+          step: 'api_key_check'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
+      )
+    }
+    
+    let requestBody;
+    try {
+      requestBody = await req.json()
+      console.log('Request body parsed successfully')
+      console.log('Request body keys:', Object.keys(requestBody))
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError)
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body',
+          step: 'json_parse',
+          details: parseError.message
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
+      )
+    }
+    
     console.log('Has imageData:', !!requestBody.imageData)
     console.log('Has prompt:', !!requestBody.prompt)
     console.log('Prompt length:', requestBody.prompt?.length || 0)
@@ -29,20 +69,23 @@ serve(async (req) => {
         hasImageData: !!imageData, 
         hasPrompt: !!prompt 
       })
-      throw new Error('Missing imageData or prompt')
+      return new Response(
+        JSON.stringify({ 
+          error: 'Missing required parameters: imageData and prompt are required',
+          step: 'parameter_validation',
+          received: {
+            hasImageData: !!imageData,
+            hasPrompt: !!prompt
+          }
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
+      )
     }
 
-    // Get FAL API key from Supabase secrets
-    const FAL_API_KEY = Deno.env.get('FAL_API_KEY')
-    console.log('FAL_API_KEY exists:', !!FAL_API_KEY)
-    console.log('FAL_API_KEY length:', FAL_API_KEY?.length || 0)
-    
-    if (!FAL_API_KEY) {
-      console.error('FAL API key not configured')
-      throw new Error('FAL API key not configured')
-    }
-
-    console.log('FAL API key found, proceeding with video generation...')
+    console.log('Parameters validated successfully')
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -143,19 +186,20 @@ serve(async (req) => {
     )
   } catch (error) {
     console.error('=== VIDEO GENERATION ERROR ===')
-    console.error('Error type:', error.constructor.name)
-    console.error('Error message:', error.message)
-    console.error('Error stack:', error.stack)
+    console.error('Error type:', error?.constructor?.name || 'Unknown')
+    console.error('Error message:', error?.message || 'No message')
+    console.error('Error stack:', error?.stack || 'No stack')
     console.error('=== END ERROR DETAILS ===')
     
     return new Response(
       JSON.stringify({ 
-        error: error.message,
-        details: error.stack
+        error: error?.message || 'Unknown error occurred',
+        details: error?.stack || 'No stack trace available',
+        step: 'execution_error'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 500,
       },
     )
   }
