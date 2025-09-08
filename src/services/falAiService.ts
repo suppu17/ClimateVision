@@ -35,7 +35,7 @@ class FalAiService {
           motion_bucket_id: 180,
           cond_aug: 0.02,
           steps: 25,
-          fps: 6
+          fps: 10
         }),
       });
 
