@@ -35,6 +35,10 @@ All colors MUST be HSL.
     --accent: 30 35% 75%;
     --accent-foreground: 30 15% 25%;
 
+    /* Navigation Blue */
+    --nav-blue: 210 70% 60%;
+    --nav-blue-foreground: 0 0% 100%;
+
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
 
@@ -104,6 +108,10 @@ All colors MUST be HSL.
 
     --accent: 30 25% 55%;
     --accent-foreground: 30 15% 85%;
+
+    /* Navigation Blue - Dark mode */
+    --nav-blue: 210 80% 70%;
+    --nav-blue-foreground: 0 0% 100%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
