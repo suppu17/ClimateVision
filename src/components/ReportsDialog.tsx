@@ -35,6 +35,7 @@ const ReportsDialog = ({ open, onOpenChange }: ReportsDialogProps) => {
       const { data, error } = await supabase
         .from('reports')
         .select('*')
+        .eq('status', 'submitted')
         .order('created_at', { ascending: false });
 
       if (error) {

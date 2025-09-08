@@ -17,8 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, FileText, MapPin, User, X, Upload, Image } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { AlertTriangle, FileText, MapPin, User, X, Upload, Image, Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface EcoReportDialogProps {
@@ -31,6 +31,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [formData, setFormData] = useState({
     violationType: "",
     severityLevel: "",
@@ -87,6 +88,77 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
     }
   };
 
+  const handleSaveDraft = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // For drafts, only require at least one field to be filled
+    if (!formData.violationType && !formData.location && !formData.description && 
+        !formData.reporterName && !formData.email) {
+      toast({
+        title: "Cannot Save Empty Draft",
+        description: "Please fill out at least one field before saving as draft.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSavingDraft(true);
+
+    try {
+      // Upload image if selected
+      let imageUrl = null;
+      if (selectedImage) {
+        imageUrl = await uploadImage(selectedImage);
+        if (!imageUrl) {
+          toast({
+            title: "Image Upload Failed",
+            description: "Failed to upload image. Draft will be saved without image.",
+          });
+        }
+      }
+
+      // Save draft to database
+      const { error } = await supabase
+        .from('reports')
+        .insert({
+          violation_type: formData.violationType || null,
+          location: formData.location || 'Draft - Location not specified',
+          description: formData.description || 'Draft - Description not provided',
+          reporter_name: formData.reporterName || 'Draft Reporter',
+          reporter_email: formData.email || 'draft@example.com',
+          reporter_phone: formData.phoneNumber || null,
+          image_url: imageUrl,
+          status: 'draft',
+        });
+
+      if (error) {
+        console.error('Error saving draft:', error);
+        toast({
+          title: "Draft Save Failed",
+          description: "Failed to save your draft. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Draft Saved",
+        description: "Your report draft has been saved. You can continue editing it later.",
+      });
+      
+      // Don't reset form or close dialog for drafts - let user continue editing
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast({
+        title: "Draft Save Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -117,7 +189,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
         }
       }
 
-      // Save report to database
+      // Save report to database with submitted status
       const { error } = await supabase
         .from('reports')
         .insert({
@@ -128,6 +200,7 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
           reporter_email: formData.email,
           reporter_phone: formData.phoneNumber || null,
           image_url: imageUrl,
+          status: 'submitted',
         });
 
       if (error) {
@@ -455,8 +528,18 @@ const EcoReportDialog = ({ open, onOpenChange }: EcoReportDialogProps) => {
               Cancel
             </Button>
             <Button
+              type="button"
+              onClick={handleSaveDraft}
+              disabled={isSavingDraft || isSubmitting}
+              variant="outline"
+              className="bg-transparent border-yellow-500 text-yellow-400 hover:bg-yellow-900/20"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isSavingDraft ? "Saving Draft..." : "Save Draft"}
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSavingDraft}
               className="bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-50"
             >
               {isSubmitting ? "Submitting..." : "Submit Report"}

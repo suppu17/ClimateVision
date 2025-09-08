@@ -24,6 +24,7 @@ export type Database = {
           reporter_email: string
           reporter_name: string
           reporter_phone: string | null
+          status: string
           updated_at: string
           violation_type: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           reporter_email: string
           reporter_name: string
           reporter_phone?: string | null
+          status?: string
           updated_at?: string
           violation_type: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           reporter_email?: string
           reporter_name?: string
           reporter_phone?: string | null
+          status?: string
           updated_at?: string
           violation_type?: string
         }
