@@ -39,36 +39,55 @@ const VideoHero = ({
   const { addNotification } = useNotifications();
   
   const handleDownload = async () => {
-    if (!generatedImage) return;
+    if (!generatedVideo && !generatedImage) return;
+    
+    const urlToDownload = generatedVideo || generatedImage;
+    const isVideo = !!generatedVideo;
     
     try {
-      const response = await fetch(generatedImage);
+      const response = await fetch(urlToDownload);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `climate-image-${selectedEffect}-${Date.now()}.png`;
+      
+      if (isVideo) {
+        link.download = `climate-solution-video-${selectedEffect}-${Date.now()}.mp4`;
+        addNotification("success", "Video downloaded successfully!");
+      } else {
+        link.download = `climate-image-${selectedEffect}-${Date.now()}.png`;
+        addNotification("success", "Image downloaded successfully!");
+      }
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      addNotification("success", "Image downloaded successfully!");
     } catch (error) {
-      addNotification("error", "Failed to download image");
+      addNotification("error", `Failed to download ${isVideo ? 'video' : 'image'}`);
     }
   };
 
   const handleShare = async () => {
-    if (!generatedImage) return;
+    const urlToShare = generatedVideo || generatedImage;
+    const isVideo = !!generatedVideo;
+    
+    if (!urlToShare) return;
+    
     if (navigator.share) {
       try {
-        const response = await fetch(generatedImage);
+        const response = await fetch(urlToShare);
         const blob = await response.blob();
-        const file = new File([blob], `climate-effect-${selectedEffect}.png`, { type: 'image/png' });
+        const fileName = isVideo 
+          ? `climate-solution-video-${selectedEffect}.mp4`
+          : `climate-effect-${selectedEffect}.png`;
+        const mimeType = isVideo ? 'video/mp4' : 'image/png';
+        
+        const file = new File([blob], fileName, { type: mimeType });
         
         await navigator.share({
           title: 'Climate Impact Visualization',
-          text: `Check out this climate impact visualization created with ClimateVision AI`,
+          text: `Check out this climate ${isVideo ? 'solution video' : 'impact visualization'} created with ClimateVision AI`,
           files: [file]
         });
         addNotification("success", "Shared successfully!");
@@ -82,9 +101,18 @@ const VideoHero = ({
     }
   };
 
-  // Determine which content to show as backdrop
+  // Determine which content to show as backdrop - prioritize video over image
   const backdropContent = generatedVideo || generatedImage || selectedImage;
   const showVideo = !backdropContent;
+  const showGeneratedVideo = !!generatedVideo;
+
+  console.log('VideoHero render state:', {
+    generatedVideo: !!generatedVideo,
+    generatedImage: !!generatedImage,
+    selectedImage: !!selectedImage,
+    showGeneratedVideo,
+    backdropContent: !!backdropContent
+  });
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -120,6 +148,10 @@ const VideoHero = ({
             muted
             playsInline
             controls
+            onLoadStart={() => console.log('Video loading started:', generatedVideo)}
+            onLoadedData={() => console.log('Video loaded successfully:', generatedVideo)}
+            onError={(e) => console.error('Video error:', e, 'URL:', generatedVideo)}
+            onCanPlay={() => console.log('Video can play')}
           />
         ) : (
           // Show uploaded or generated image as backdrop
@@ -165,11 +197,11 @@ const VideoHero = ({
                   minimal={true}
                 />
               </div>
-            ) : generatedVideo ? (
+            ) : showGeneratedVideo ? (
               <div className="glass-card p-6 animate-slide-up">
                 <div className="space-y-4 text-center">
                   <p className="text-white/90 text-lg font-medium">
-                    Climate solution video generated! See how {selectedEffect} resolves the climate issue.
+                    Climate solution video complete! Watch how {selectedEffect} resolves the climate issue.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
                     <Button 
@@ -178,7 +210,7 @@ const VideoHero = ({
                       className="glass-button"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Download Image
+                      Download Video
                     </Button>
                     <Button 
                       onClick={handleShare}
@@ -186,11 +218,12 @@ const VideoHero = ({
                       className="glass-button"
                     >
                       <Share className="h-4 w-4 mr-2" />
-                      Share
+                      Share Video
                     </Button>
                     <Button 
                       onClick={onReset}
-                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                      variant="outline"
+                      className="glass-button"
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Try Another Effect

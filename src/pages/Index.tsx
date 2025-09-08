@@ -142,13 +142,18 @@ const IndexContent = () => {
       console.log('Response error:', error);
 
       if (error) {
+        console.error('Supabase function error:', error);
         throw error;
       }
 
+      console.log('Function response received:', data);
+
       if (data?.videoUrl) {
+        console.log('Video URL received:', data.videoUrl);
         setGeneratedVideo(data.videoUrl);
         addNotification("success", "Video showing climate solution generated successfully!");
       } else {
+        console.error('No videoUrl in response:', data);
         throw new Error("No video URL returned from generation service");
       }
 
