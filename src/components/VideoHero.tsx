@@ -19,14 +19,6 @@ const VideoHero = () => {
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
         <div className="glass-card p-8 md:p-12 animate-fade-in">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6 text-glow">
-            Visualize Climate Impact
-          </h1>
-          <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
-            Upload your nature images and see how climate change affects our environment. 
-            Learn through AI-powered visualizations that show both the challenges and solutions.
-          </p>
-          
           <div className="mt-8">
             <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-4">
               Start Your Climate Journey
