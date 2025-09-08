@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
 import { geminiService } from "@/services/geminiService";
 import { NotificationProvider, useNotifications } from "@/contexts/NotificationContext";
-import { supabase } from "@/integrations/supabase/client";
 
 const IndexContent = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -13,8 +12,6 @@ const IndexContent = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showUploadSection, setShowUploadSection] = useState(false);
-  const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
-  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
   const { addNotification } = useNotifications();
 
@@ -77,113 +74,8 @@ const IndexContent = () => {
     }
   };
 
-  const handleGenerateVideo = async () => {
-    if (!generatedImage || !selectedEffect || !effectCategory) {
-      addNotification("error", "Please generate a climate impact image first.");
-      return;
-    }
-
-    setIsGeneratingVideo(true);
-    addNotification("info", "Starting video generation... This may take 30-60 seconds.");
-
-    try {
-      // Create a comprehensive prompt that shows the solution resolving the climate issue
-      let videoPrompt = "";
-      if (effectCategory === "effects") {
-        videoPrompt = `Transform this climate impact scene by reversing the damage: ${selectedEffect}. Show the environment healing and returning to a healthy, natural state. The transformation should be gradual and hopeful, demonstrating environmental restoration and recovery.`;
-      } else {
-        videoPrompt = `Show how this solution actively resolves the climate issue: ${selectedEffect}. Display the positive environmental transformation, with the solution being implemented and the climate problem being addressed. Show progress from damaged environment to restored, healthy ecosystem.`;
-      }
-
-      console.log('=== CLIENT VIDEO GENERATION START ===');
-      console.log('Effect category:', effectCategory);
-      console.log('Selected effect:', selectedEffect);
-      console.log('Video prompt:', videoPrompt);
-      console.log('Generated image available:', !!generatedImage);
-
-      // Convert generated image to base64 for the API
-      const response = await fetch(generatedImage);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status}`);
-      }
-      
-      const blob = await response.blob();
-      console.log('Image blob size:', blob.size, 'type:', blob.type);
-      
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(blob);
-      });
-
-      console.log('Base64 conversion completed, length:', base64.length);
-      console.log('Base64 prefix:', base64.substring(0, 50));
-
-      const requestPayload = {
-        imageData: base64,
-        prompt: videoPrompt
-      };
-      
-      console.log('Sending request to generate-video function...');
-
-      // Set a timeout for the video generation
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Video generation timed out')), 120000); // 2 minute timeout
-      });
-
-      const generationPromise = supabase.functions.invoke('generate-video', {
-        body: requestPayload
-      });
-
-      const { data, error } = await Promise.race([generationPromise, timeoutPromise]);
-
-      console.log('=== CLIENT RESPONSE RECEIVED ===');
-      console.log('Response data:', data);
-      console.log('Response error:', error);
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        
-        // Check if this is a specific configuration error
-        if (error.message?.includes('FAL API key not configured')) {
-          throw new Error('FAL API key is not configured. Please add your FAL API key to Supabase secrets.');
-        }
-        
-        throw error;
-      }
-
-      console.log('Function response received:', data);
-
-      if (data?.videoUrl) {
-        console.log('Video URL received:', data.videoUrl);
-        setGeneratedVideo(data.videoUrl);
-        addNotification("success", "Video showing climate solution generated successfully!");
-      } else {
-        console.error('No videoUrl in response:', data);
-        // Check if there's a specific error step
-        if (data?.error) {
-          throw new Error(`${data.error} (Step: ${data.step || 'unknown'})`);
-        }
-        throw new Error("No video URL returned from generation service");
-      }
-
-    } catch (error) {
-      console.error("Video generation error:", error);
-      if (error instanceof Error && error.message === 'Video generation timed out') {
-        addNotification("error", "Video generation timed out. Please try again with a simpler prompt.");
-      } else if (error instanceof Error) {
-        addNotification("error", `Failed to generate video: ${error.message}`);
-      } else {
-        addNotification("error", "Failed to generate video. Please try again.");
-      }
-    } finally {
-      setIsGeneratingVideo(false);
-    }
-  };
-
   const handleReset = () => {
     setGeneratedImage(null);
-    setGeneratedVideo(null);
     setSelectedEffect(null);
     setEffectCategory(null);
     addNotification("info", "Ready for another climate effect!");
@@ -197,16 +89,13 @@ const IndexContent = () => {
       <VideoHero 
         selectedImage={selectedImage}
         generatedImage={generatedImage}
-        generatedVideo={generatedVideo}
         selectedEffect={selectedEffect}
         effectCategory={effectCategory}
         isGenerating={isGenerating}
-        isGeneratingVideo={isGeneratingVideo}
         onImageSelect={handleImageSelect}
         onClearImage={handleClearImage}
         onEffectSelect={handleEffectSelect}
         onGenerate={handleGenerate}
-        onGenerateVideo={handleGenerateVideo}
         onReset={handleReset}
       />
       
