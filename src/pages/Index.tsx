@@ -95,14 +95,36 @@ const IndexContent = () => {
         videoPrompt = `Show how this solution actively resolves the climate issue: ${selectedEffect}. Display the positive environmental transformation, with the solution being implemented and the climate problem being addressed. Show progress from damaged environment to restored, healthy ecosystem.`;
       }
 
+      console.log('=== CLIENT VIDEO GENERATION START ===');
+      console.log('Effect category:', effectCategory);
+      console.log('Selected effect:', selectedEffect);
+      console.log('Video prompt:', videoPrompt);
+      console.log('Generated image available:', !!generatedImage);
+
       // Convert generated image to base64 for the API
       const response = await fetch(generatedImage);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      
       const blob = await response.blob();
+      console.log('Image blob size:', blob.size, 'type:', blob.type);
+      
       const base64 = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(blob);
       });
+
+      console.log('Base64 conversion completed, length:', base64.length);
+      console.log('Base64 prefix:', base64.substring(0, 50));
+
+      const requestPayload = {
+        imageData: base64,
+        prompt: videoPrompt
+      };
+      
+      console.log('Sending request to generate-video function...');
 
       // Set a timeout for the video generation
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -110,13 +132,14 @@ const IndexContent = () => {
       });
 
       const generationPromise = supabase.functions.invoke('generate-video', {
-        body: {
-          imageData: base64,
-          prompt: videoPrompt
-        }
+        body: requestPayload
       });
 
       const { data, error } = await Promise.race([generationPromise, timeoutPromise]);
+
+      console.log('=== CLIENT RESPONSE RECEIVED ===');
+      console.log('Response data:', data);
+      console.log('Response error:', error);
 
       if (error) {
         throw error;
