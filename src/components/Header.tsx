@@ -13,16 +13,16 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+          <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
             <Upload className="h-4 w-4" />
             Upload
           </button>
-          <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+          <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
             <Sparkles className="h-4 w-4" />
             Effects
           </button>
           <NotificationBell />
-          <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+          <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
             <Info className="h-4 w-4" />
             About
           </button>
