@@ -137,22 +137,10 @@ const IndexContent = () => {
         onReset={handleReset}
       />
       
-      {/* ElevenLabs Conversational AI Widget with Logo */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center space-y-4">
-        <div className="bg-background/80 backdrop-blur-sm rounded-full p-2 border border-border/50">
-          <video 
-            src="/voice-ai-logo.mp4"
-            autoPlay
-            loop
-            muted
-            className="w-12 h-12 rounded-full object-cover"
-            aria-label="Voice AI Assistant"
-          />
-        </div>
-        <div dangerouslySetInnerHTML={{ 
-          __html: '<elevenlabs-convai agent-id="agent_8001k4kpmyb7ey0t538czxz4z1jc"></elevenlabs-convai>' 
-        }} />
-      </div>
+      {/* ElevenLabs Conversational AI Widget */}
+      <div dangerouslySetInnerHTML={{ 
+        __html: '<elevenlabs-convai agent-id="agent_8001k4kpmyb7ey0t538czxz4z1jc"></elevenlabs-convai>' 
+      }} />
     </div>
   );
 };
