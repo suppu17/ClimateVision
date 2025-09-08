@@ -136,6 +136,11 @@ const IndexContent = () => {
         onGenerateVideo={handleGenerateVideo}
         onReset={handleReset}
       />
+      
+      {/* ElevenLabs Conversational AI Widget */}
+      <div dangerouslySetInnerHTML={{ 
+        __html: '<elevenlabs-convai agent-id="agent_8001k4kpmyb7ey0t538czxz4z1jc"></elevenlabs-convai>' 
+      }} />
     </div>
   );
 };
