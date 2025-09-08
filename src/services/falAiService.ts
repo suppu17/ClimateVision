@@ -1,9 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Simple FAL AI service without Supabase dependency
+// Note: This uses the API key directly for now - connect to Supabase for secure backend storage
 
 export interface VideoGenerationParams {
   imageUrl: string;
@@ -21,28 +17,40 @@ export interface GeneratedVideo {
 }
 
 class FalAiService {
+  private readonly apiKey = "bc95f25c-17d7-43a1-8c1e-e8f0132ffabc:9ad35f416c321cc64669a664575bacce";
+
   async generateVideo(params: VideoGenerationParams): Promise<GeneratedVideo> {
     try {
-      // Call the Supabase edge function for video generation
-      const { data, error } = await supabase.functions.invoke('generate-video', {
-        body: { 
-          imageUrl: params.imageUrl,
-          prompt: params.prompt,
-          duration: params.duration || "8s",
-          resolution: params.resolution || "720p"
-        }
+      console.log('Generating video with FAL AI...');
+      
+      // Direct FAL API call with the provided API key
+      const response = await fetch('https://fal.run/fal-ai/stable-video-diffusion', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Key ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image_url: params.imageUrl,
+          motion_bucket_id: 180,
+          cond_aug: 0.02,
+          steps: 25,
+          fps: 6
+        }),
       });
 
-      if (error) {
-        throw new Error(error.message);
+      if (!response.ok) {
+        throw new Error(`FAL API error: ${response.statusText}`);
       }
 
-      if (data?.videoUrl) {
+      const result = await response.json();
+      
+      if (result.video && result.video.url) {
         return {
-          url: data.videoUrl,
+          url: result.video.url,
           contentType: "video/mp4",
           fileName: "climate-video.mp4",
-          fileSize: 5000000
+          fileSize: result.video.file_size || 5000000
         };
       }
 
