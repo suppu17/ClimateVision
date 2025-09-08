@@ -3,9 +3,9 @@ import Header from "@/components/Header";
 import VideoHero from "@/components/VideoHero";
 import { geminiService } from "@/services/geminiService";
 import { falAiService } from "@/services/falAiService";
-import { toast } from "sonner";
+import { NotificationProvider, useNotifications } from "@/contexts/NotificationContext";
 
-const Index = () => {
+const IndexContent = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedEffect, setSelectedEffect] = useState<string | null>(null);
@@ -16,11 +16,13 @@ const Index = () => {
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
 
+  const { addNotification } = useNotifications();
+
   const handleImageSelect = (file: File) => {
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setSelectedImage(url);
-    toast.success("Image uploaded successfully! Now choose a climate effect.");
+    addNotification("success", "Image uploaded successfully! Now choose a climate effect.");
   };
 
   const handleClearImage = () => {
@@ -29,18 +31,18 @@ const Index = () => {
     setSelectedEffect(null);
     setEffectCategory(null);
     setGeneratedImage(null);
-    toast.info("Image cleared. Upload a new one to continue.");
+    addNotification("info", "Image cleared. Upload a new one to continue.");
   };
 
   const handleEffectSelect = (effectId: string, category: "effects" | "improvements") => {
     setSelectedEffect(effectId);
     setEffectCategory(category);
-    toast.success(`Selected ${effectId} effect. Ready to generate!`);
+    addNotification("success", `Selected ${effectId} effect. Ready to generate!`);
   };
 
   const handleGenerate = async () => {
     if (!selectedFile || !selectedEffect) {
-      toast.error("Please upload an image and select an effect first.");
+      addNotification("error", "Please upload an image and select an effect first.");
       return;
     }
 
@@ -62,13 +64,13 @@ const Index = () => {
       const generatedUrl = URL.createObjectURL(blob);
       
       setGeneratedImage(generatedUrl);
-      toast.success("Climate impact visualization generated!");
+      addNotification("success", "Climate impact visualization generated!");
     } catch (error) {
       console.error("Generation error:", error);
       if (error instanceof Error) {
-        toast.error(error.message);
+        addNotification("error", error.message);
       } else {
-        toast.error("Failed to generate climate visualization. Please try again.");
+        addNotification("error", "Failed to generate climate visualization. Please try again.");
       }
     } finally {
       setIsGenerating(false);
@@ -77,7 +79,7 @@ const Index = () => {
 
   const handleGenerateVideo = async () => {
     if (!generatedImage || !selectedEffect) {
-      toast.error("Please generate an image first.");
+      addNotification("error", "Please generate an image first.");
       return;
     }
 
@@ -94,13 +96,13 @@ const Index = () => {
       });
       
       setGeneratedVideo(result.url);
-      toast.success("Climate video generated successfully!");
+      addNotification("success", "Climate video generated successfully!");
     } catch (error) {
       console.error("Video generation error:", error);
       if (error instanceof Error) {
-        toast.error(error.message);
+        addNotification("error", error.message);
       } else {
-        toast.error("Failed to generate climate video. Please try again.");
+        addNotification("error", "Failed to generate climate video. Please try again.");
       }
     } finally {
       setIsGeneratingVideo(false);
@@ -112,7 +114,7 @@ const Index = () => {
     setGeneratedVideo(null);
     setSelectedEffect(null);
     setEffectCategory(null);
-    toast.info("Ready for another climate effect!");
+    addNotification("info", "Ready for another climate effect!");
   };
 
   return (
@@ -136,6 +138,14 @@ const Index = () => {
         onReset={handleReset}
       />
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <NotificationProvider>
+      <IndexContent />
+    </NotificationProvider>
   );
 };
 

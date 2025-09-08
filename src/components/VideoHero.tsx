@@ -2,7 +2,7 @@ import ImageUpload from "./ImageUpload";
 import EffectSelector from "./EffectSelector";
 import { Download, Share, RotateCcw, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface VideoHeroProps {
   selectedImage: string | null;
@@ -35,6 +35,7 @@ const VideoHero = ({
   onGenerateVideo,
   onReset 
 }: VideoHeroProps) => {
+  const { addNotification } = useNotifications();
   
   const handleDownload = async () => {
     const contentToDownload = generatedVideo || generatedImage;
@@ -53,9 +54,9 @@ const VideoHero = ({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success(`${fileType} downloaded successfully!`);
+      addNotification("success", `${fileType} downloaded successfully!`);
     } catch (error) {
-      toast.error(`Failed to download ${generatedVideo ? 'video' : 'image'}`);
+      addNotification("error", `Failed to download ${generatedVideo ? 'video' : 'image'}`);
     }
   };
 
@@ -75,14 +76,14 @@ const VideoHero = ({
           text: `Check out this climate impact visualization created with ClimateVision AI`,
           files: [file]
         });
-        toast.success("Shared successfully!");
+        addNotification("success", "Shared successfully!");
       } catch (error) {
         navigator.clipboard.writeText(window.location.href);
-        toast.success("Link copied to clipboard!");
+        addNotification("success", "Link copied to clipboard!");
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard!");
+      addNotification("success", "Link copied to clipboard!");
     }
   };
 

@@ -1,4 +1,5 @@
 import { Leaf, Upload, Sparkles, Info } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
 const Header = () => {
   return (
@@ -20,6 +21,7 @@ const Header = () => {
             <Sparkles className="h-4 w-4" />
             Effects
           </button>
+          <NotificationBell />
           <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
             <Info className="h-4 w-4" />
             About
@@ -27,9 +29,12 @@ const Header = () => {
         </nav>
 
         {/* Mobile menu button */}
-        <button className="md:hidden p-2 text-white">
-          <Leaf className="h-6 w-6" />
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          <NotificationBell />
+          <button className="p-2 text-white">
+            <Leaf className="h-6 w-6" />
+          </button>
+        </div>
       </div>
     </header>
   );
