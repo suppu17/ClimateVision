@@ -23,19 +23,19 @@ class FalAiService {
     try {
       console.log('Generating video with FAL AI...', { imageUrl: params.imageUrl, prompt: params.prompt });
       
-      // Use the correct FAL API endpoint
-      const response = await fetch('https://fal.run/fal-ai/stable-video', {
+      // Use the correct FAL API endpoint for Veo3
+      const response = await fetch('https://fal.run/fal-ai/veo3/fast/image-to-video', {
         method: 'POST',
         headers: {
           'Authorization': `Key ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          prompt: params.prompt,
           image_url: params.imageUrl,
-          motion_bucket_id: 180,
-          cond_aug: 0.02,
-          steps: 25,
-          fps: 10
+          duration: params.duration || "8s",
+          generate_audio: params.generateAudio ?? true,
+          resolution: params.resolution || "720p"
         }),
       });
 

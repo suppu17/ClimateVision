@@ -86,8 +86,17 @@ const IndexContent = () => {
     setIsGeneratingVideo(true);
     
     try {
+      // Convert blob to base64 for the API
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+
       const result = await falAiService.generateVideo({
-        imageUrl: generatedImage,
+        imageUrl: base64,
         prompt: selectedEffect,
         duration: "8s",
         generateAudio: true,
