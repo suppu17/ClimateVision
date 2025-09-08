@@ -1,15 +1,9 @@
-import { fal } from "@fal-ai/client";
+import { createClient } from '@supabase/supabase-js';
 
-// Note: For production use, store API keys securely
-// For now, using a placeholder - users should provide their own FAL API key
-let falApiKey = localStorage.getItem('fal_api_key') || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Configure FAL AI client
-if (falApiKey) {
-  fal.config({
-    credentials: falApiKey
-  });
-}
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface VideoGenerationParams {
   imageUrl: string;
@@ -28,67 +22,41 @@ export interface GeneratedVideo {
 
 class FalAiService {
   async generateVideo(params: VideoGenerationParams): Promise<GeneratedVideo> {
-    const apiKey = localStorage.getItem('fal_api_key');
-    
-    if (!apiKey) {
-      // If it's a fire-related effect, return a fallback video
-      if (params.prompt.toLowerCase().includes('fire') || 
-          params.prompt.toLowerCase().includes('extinguish') ||
-          params.prompt.toLowerCase().includes('brigade')) {
+    try {
+      // Call the Supabase edge function for video generation
+      const { data, error } = await supabase.functions.invoke('generate-video', {
+        body: { 
+          imageUrl: params.imageUrl,
+          prompt: params.prompt,
+          duration: params.duration || "8s",
+          resolution: params.resolution || "720p"
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.videoUrl) {
         return {
-          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          url: data.videoUrl,
           contentType: "video/mp4",
-          fileName: "fire-brigade-fallback.mp4",
+          fileName: "climate-video.mp4",
           fileSize: 5000000
         };
       }
-      throw new Error("FAL API key not configured. Please set up your API key in settings.");
-    }
 
-    // Configure FAL AI client with the stored API key
-    fal.config({
-      credentials: apiKey
-    });
-
-    try {
-      // Create animation prompt from the custom description
-      const animationPrompt = `Transform the image with this effect: ${params.prompt}. Create smooth, realistic animations that bring the scene to life with natural movement and atmospheric effects.`;
-      
-      const result = await fal.subscribe("fal-ai/veo3/fast/image-to-video", {
-        input: {
-          prompt: animationPrompt,
-          image_url: params.imageUrl,
-          duration: params.duration || "8s",
-          generate_audio: params.generateAudio ?? true,
-          resolution: params.resolution || "720p"
-        },
-        logs: true,
-        onQueueUpdate: (update) => {
-          if (update.status === "IN_PROGRESS") {
-            console.log("Video generation progress:", update.logs?.map((log) => log.message));
-          }
-        },
-      });
-
-      return {
-        url: result.data.video.url,
-        contentType: result.data.video.content_type || "video/mp4",
-        fileName: result.data.video.file_name || "climate-video.mp4",
-        fileSize: result.data.video.file_size || 0
-      };
+      throw new Error('No video URL returned from API');
     } catch (error) {
-      console.error("Video generation failed:", error);
-      if (error instanceof Error && error.message.includes('Unauthorized')) {
-        throw new Error("Invalid FAL API key. Please check your API key configuration.");
-      }
+      console.error('Video generation error:', error);
       
-      // Fallback for fire-related effects
+      // Fallback video for fire/extinguisher scenarios
       if (params.prompt.toLowerCase().includes('fire') || 
           params.prompt.toLowerCase().includes('extinguish') ||
           params.prompt.toLowerCase().includes('brigade')) {
         console.log("Using fallback video for fire-related effect");
         return {
-          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          url: "https://cdn.midjourney.com/video/ae3b755e-e526-4ef1-8168-4c68b97a3af1/0.mp4",
           contentType: "video/mp4",
           fileName: "fire-brigade-fallback.mp4",
           fileSize: 5000000
