@@ -1,100 +1,11 @@
 import { useState } from "react";
-import { Flame, Cloud, Droplets, Mountain, Zap, TreePine, Car, Sun, Wind, Waves, ShieldX } from "lucide-react";
+import { Bot, Wand2, Flame, TreePine } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Bot } from "lucide-react";
-
-interface Effect {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  category: "effects" | "improvements";
-}
-
-const climateEffects: Effect[] = [
-  {
-    id: "wildfire",
-    name: "Fire",
-    description: "Show the impact of wildfires on natural landscapes",
-    icon: <Flame className="h-5 w-5" />,
-    category: "effects"
-  },
-  {
-    id: "pollution",
-    name: "Air Pollution",
-    description: "Visualize smog and air quality degradation",
-    icon: <Cloud className="h-5 w-5" />,
-    category: "effects"
-  },
-  {
-    id: "flooding",
-    name: "Flooding",
-    description: "Demonstrate water level rise and flooding effects",
-    icon: <Droplets className="h-5 w-5" />,
-    category: "effects"
-  },
-  {
-    id: "earthquake",
-    name: "Earthquake",
-    description: "Show geological damage and landscape disruption",
-    icon: <Mountain className="h-5 w-5" />,
-    category: "effects"
-  },
-  {
-    id: "extreme-weather",
-    name: "Extreme Weather",
-    description: "Display severe weather pattern changes",
-    icon: <Zap className="h-5 w-5" />,
-    category: "effects"
-  }
-];
-
-const improvements: Effect[] = [
-  {
-    id: "reforestation",
-    name: "Plant Trees",
-    description: "Add lush forest growth and vegetation recovery",
-    icon: <TreePine className="h-5 w-5" />,
-    category: "improvements"
-  },
-  {
-    id: "electric-transport",
-    name: "Electric Vehicles",
-    description: "Replace pollution with clean transportation",
-    icon: <Car className="h-5 w-5" />,
-    category: "improvements"
-  },
-  {
-    id: "solar-energy",
-    name: "Renewable energy",
-    description: "Integrate renewable energy infrastructure",
-    icon: <Sun className="h-5 w-5" />,
-    category: "improvements"
-  },
-  {
-    id: "wind-power",
-    name: "Wind Power",
-    description: "Add wind turbines for clean power generation",
-    icon: <Wind className="h-5 w-5" />,
-    category: "improvements"
-  },
-  {
-    id: "extinguisher",
-    name: "Extinguisher",
-    description: "Show fire suppression and firefighting efforts",
-    icon: <ShieldX className="h-5 w-5" />,
-    category: "improvements"
-  },
-  {
-    id: "water-conservation",
-    name: "Water Conservation",
-    description: "Implement sustainable water management systems",
-    icon: <Waves className="h-5 w-5" />,
-    category: "improvements"
-  }
-];
 
 interface EffectSelectorProps {
   selectedEffect: string | null;
@@ -106,8 +17,49 @@ interface EffectSelectorProps {
 
 const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerating, minimal = false }: EffectSelectorProps) => {
   const [activeTab, setActiveTab] = useState<"effects" | "improvements">("effects");
+  const [customEffect, setCustomEffect] = useState("");
+  const [customSolution, setCustomSolution] = useState("");
   
-  const currentEffects = activeTab === "effects" ? climateEffects : improvements;
+  // Quick effect suggestions
+  const effectSuggestions = [
+    "Wildfire spreading across the landscape",
+    "Severe flooding and water damage", 
+    "Air pollution and smog",
+    "Earthquake damage and ground cracks",
+    "Extreme storm and weather"
+  ];
+
+  const solutionSuggestions = [
+    "Fire brigade extinguishing forest fires with water and foam",
+    "Reforestation with lush green trees and vegetation",
+    "Solar panels and renewable energy infrastructure", 
+    "Wind turbines generating clean power",
+    "Water conservation and sustainable management"
+  ];
+
+  const handleQuickSelect = (suggestion: string) => {
+    if (activeTab === "effects") {
+      setCustomEffect(suggestion);
+      onEffectSelect(suggestion, "effects");
+    } else {
+      setCustomSolution(suggestion);
+      onEffectSelect(suggestion, "improvements");
+    }
+  };
+
+  const handleCustomInput = (value: string) => {
+    if (activeTab === "effects") {
+      setCustomEffect(value);
+      if (value.trim()) {
+        onEffectSelect(value.trim(), "effects");
+      }
+    } else {
+      setCustomSolution(value);
+      if (value.trim()) {
+        onEffectSelect(value.trim(), "improvements");
+      }
+    }
+  };
 
   if (minimal) {
     return (
@@ -123,6 +75,7 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
                 : "text-white/70 hover:text-white"
             )}
           >
+            <Flame className="h-4 w-4 inline mr-2" />
             Climate Effects
           </button>
           <button
@@ -134,40 +87,46 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
                 : "text-white/70 hover:text-white"
             )}
           >
+            <TreePine className="h-4 w-4 inline mr-2" />
             Solutions
           </button>
         </div>
 
-        {/* Effects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          {currentEffects.map((effect) => (
-            <button
-              key={effect.id}
-              onClick={() => onEffectSelect(effect.id, activeTab)}
-              className={cn(
-                "flex items-center gap-2 p-3 rounded-xl transition-all text-left",
-                "border border-white/20 bg-white/10 hover:bg-white/20",
-                selectedEffect === effect.id
-                  ? "border-white/40 bg-white/20 shadow-md"
-                  : ""
-              )}
-            >
-              <div className="text-red-400 flex-shrink-0">
-                {effect.icon}
-              </div>
-              <span className="text-white text-sm font-medium truncate">
-                {effect.name}
-              </span>
-            </button>
-          ))}
+        {/* Custom Input */}
+        <div className="space-y-3">
+          <Label className="text-white text-sm">
+            {activeTab === "effects" ? "Describe the climate effect you want to visualize:" : "Describe the solution you want to show:"}
+          </Label>
+          <Textarea
+            placeholder={activeTab === "effects" ? "e.g., Wildfire spreading through forest with smoke and flames..." : "e.g., Fire brigade with trucks and water hoses extinguishing forest fires..."}
+            value={activeTab === "effects" ? customEffect : customSolution}
+            onChange={(e) => handleCustomInput(e.target.value)}
+            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 min-h-[80px]"
+          />
         </div>
 
-        {/* Fixed Generate Button Container */}
+        {/* Quick Suggestions */}
+        <div className="space-y-2">
+          <Label className="text-white/80 text-xs">Quick suggestions:</Label>
+          <div className="grid grid-cols-1 gap-2">
+            {(activeTab === "effects" ? effectSuggestions : solutionSuggestions).map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickSelect(suggestion)}
+                className="text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-xs transition-all"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Generate Button */}
         <div className="min-h-[56px] flex items-center justify-center">
           <Button
             onClick={onGenerate}
             disabled={isGenerating || !selectedEffect}
-            className="bg-gradient-nature text-white hover:opacity-90 disabled:opacity-50 px-8 py-3 rounded-full font-medium transition-all"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 disabled:opacity-50 px-8 py-3 rounded-full font-medium transition-all w-full"
           >
             <Bot className="h-4 w-4 mr-2" />
             {isGenerating ? "Generating Climate Impact..." : "Generate Climate Impact"}
@@ -177,77 +136,104 @@ const EffectSelector = ({ selectedEffect, onEffectSelect, onGenerate, isGenerati
     );
   }
 
-  const EffectCard = ({ effect }: { effect: Effect }) => (
-    <div
-      className={cn(
-        minimal ? "glass-card p-3 cursor-pointer transition-all duration-300 hover:scale-105" : "glass-card p-4 cursor-pointer transition-all duration-300 hover:scale-105",
-        selectedEffect === effect.id ? "ring-2 ring-primary glow" : ""
-      )}
-      onClick={() => onEffectSelect(effect.id, effect.category)}
-    >
-      <div className={cn("flex items-center gap-3", minimal ? "mb-2" : "mb-3")}>
-        <div className={cn(
-          minimal ? "p-1.5 rounded-lg" : "p-2 rounded-lg",
-          effect.category === "effects" ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
-        )}>
-          {effect.icon}
-        </div>
-        <h3 className={cn("font-semibold text-foreground", minimal ? "text-sm" : "")}>{effect.name}</h3>
-      </div>
-      {!minimal && <p className="text-sm text-muted-foreground">{effect.description}</p>}
-    </div>
-  );
-
   return (
-    <div className={minimal ? "" : "glass-card p-6 animate-slide-up"}>
-      {!minimal && (
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Choose Climate Effect</h2>
-          <p className="text-muted-foreground">
-            Select how you want to transform your image to learn about climate impact
-          </p>
-        </div>
-      )}
+    <div className="glass-card p-6 animate-slide-up">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground mb-2">Create Custom Climate Effect</h2>
+        <p className="text-muted-foreground">
+          Describe exactly what you want to visualize - be as specific as possible
+        </p>
+      </div>
 
-      <Tabs defaultValue="effects" className="w-full">
-        <TabsList className={cn("grid w-full grid-cols-2 glass", minimal ? "mb-4" : "mb-6")}>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "effects" | "improvements")} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 glass mb-6">
           <TabsTrigger 
             value="effects" 
             className="data-[state=active]:bg-destructive/20 data-[state=active]:text-destructive"
           >
+            <Flame className="h-4 w-4 mr-2" />
             Climate Effects
           </TabsTrigger>
           <TabsTrigger 
             value="improvements"
             className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
           >
+            <TreePine className="h-4 w-4 mr-2" />
             Solutions
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="effects" className="space-y-4">
-          <div className={cn("grid gap-3", minimal ? "grid-cols-2 lg:grid-cols-5" : "grid-cols-1 md:grid-cols-2 gap-4")}>
-            {climateEffects.map((effect) => (
-              <EffectCard key={effect.id} effect={effect} />
-            ))}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="effect-input" className="text-foreground mb-2 block">
+                Describe the climate effect you want to visualize:
+              </Label>
+              <Textarea
+                id="effect-input"
+                placeholder="e.g., Massive wildfire spreading through a dense forest with thick black smoke, orange flames, and ash falling from the sky..."
+                value={customEffect}
+                onChange={(e) => handleCustomInput(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {effectSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickSelect(suggestion)}
+                    className="text-left p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </TabsContent>
 
         <TabsContent value="improvements" className="space-y-4">
-          <div className={cn("grid gap-3", minimal ? "grid-cols-2 lg:grid-cols-5" : "grid-cols-1 md:grid-cols-2 gap-4")}>
-            {improvements.map((effect) => (
-              <EffectCard key={effect.id} effect={effect} />
-            ))}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="solution-input" className="text-foreground mb-2 block">
+                Describe the solution you want to show:
+              </Label>
+              <Textarea
+                id="solution-input"
+                placeholder="e.g., Fire brigade with multiple red fire trucks, firefighters in yellow suits spraying powerful water hoses, helicopters dropping water from above to extinguish forest fires..."
+                value={customSolution}
+                onChange={(e) => handleCustomInput(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-muted-foreground text-sm mb-2 block">Quick suggestions:</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {solutionSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickSelect(suggestion)}
+                    className="text-left p-3 rounded-lg glass-card hover:bg-muted/50 text-sm transition-all"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
 
-      <div className={cn(minimal ? "mt-4" : "mt-6 pt-6 border-t border-glass-border")}>
+      <div className="mt-6 pt-6 border-t border-glass-border">
         <Button 
           onClick={onGenerate}
           disabled={isGenerating || !selectedEffect}
-          className="w-full bg-gradient-nature text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity"
-          size={minimal ? "default" : "lg"}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+          size="lg"
         >
           <Bot className="h-4 w-4 mr-2" />
           {isGenerating ? "Generating..." : "Generate Climate Impact"}

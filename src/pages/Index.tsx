@@ -42,7 +42,7 @@ const IndexContent = () => {
 
   const handleGenerate = async () => {
     if (!selectedFile || !selectedEffect) {
-      addNotification("error", "Please upload an image and select an effect first.");
+      addNotification("error", "Please upload an image and describe an effect first.");
       return;
     }
 
@@ -86,10 +86,9 @@ const IndexContent = () => {
     setIsGeneratingVideo(true);
     
     try {
-      const prompt = falAiService.createClimatePrompt(selectedEffect);
       const result = await falAiService.generateVideo({
         imageUrl: generatedImage,
-        prompt,
+        prompt: selectedEffect,
         duration: "8s",
         generateAudio: true,
         resolution: "720p"
