@@ -1,4 +1,4 @@
-import { Leaf, Upload, Sparkles, Info } from "lucide-react";
+import { Leaf, Volume2, Phone } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 
 const Header = () => {
@@ -14,18 +14,14 @@ const Header = () => {
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
-            <Upload className="h-4 w-4" />
-            Upload
+            <Volume2 className="h-4 w-4" />
+            EcoVoice
           </button>
           <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
-            <Sparkles className="h-4 w-4" />
-            Effects
+            <Phone className="h-4 w-4" />
+            Emergency Contact
           </button>
           <NotificationBell />
-          <button className="flex items-center gap-2 text-white font-bold hover:text-white/90 transition-colors">
-            <Info className="h-4 w-4" />
-            About
-          </button>
         </nav>
 
         {/* Mobile menu button */}
