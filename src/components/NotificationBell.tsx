@@ -46,7 +46,7 @@ const NotificationBell = () => {
         variant="ghost"
         size="icon"
         onClick={handleBellClick}
-        className="relative text-white/80 hover:text-white transition-colors"
+        className="relative text-nav-blue hover:text-nav-blue/90 transition-colors"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
