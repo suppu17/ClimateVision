@@ -93,7 +93,6 @@ const VideoHero = ({
             >
               <source src="https://cdn.midjourney.com/video/7819b5ec-35f8-413c-beb9-4fa5b926074a/0.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-gradient-hero"></div>
           </>
         ) : (
           // Show uploaded or generated image as backdrop
@@ -103,22 +102,68 @@ const VideoHero = ({
               alt="Climate visualization backdrop" 
               className="w-full h-full object-cover transition-all duration-1000"
             />
-            <div className="absolute inset-0 bg-black/40"></div>
           </>
         )}
       </div>
 
       {/* Fixed Content Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col">
-        {/* Top Section - Title and Upload */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-4xl mx-auto px-6">
-            <div className="glass-card p-8 md:p-12 animate-fade-in">
-              <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-6">
-                Start Your Climate Journey
-              </h2>
-              
-              {!selectedImage ? (
+        {/* Top Section - Title (only when no image uploaded) */}
+        {!selectedImage && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center max-w-4xl mx-auto px-6">
+              <div className="glass-card p-8 md:p-12 animate-fade-in">
+                <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-6">
+                  Start Your Climate Journey
+                </h2>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Generated Image Actions (top center when image is generated) */}
+        {generatedImage && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="glass-card p-6 animate-fade-in">
+              <div className="space-y-4 text-center">
+                <p className="text-primary-foreground/90">
+                  Climate effect visualization complete! 
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <Button 
+                    onClick={handleDownload}
+                    variant="outline"
+                    className="glass-button"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                  <Button 
+                    onClick={handleShare}
+                    variant="outline"
+                    className="glass-button"
+                  >
+                    <Share className="h-4 w-4 mr-2" />
+                    Share
+                  </Button>
+                  <Button 
+                    onClick={onReset}
+                    className="bg-gradient-nature text-primary-foreground hover:opacity-90"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Try Another Effect
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Section - Upload or Effects */}
+        <div className="absolute bottom-6 left-6 right-6">
+          <div className="max-w-4xl mx-auto">
+            {!selectedImage ? (
+              <div className="glass-card p-6 animate-slide-up">
                 <div className="max-w-lg mx-auto">
                   <ImageUpload 
                     onImageSelect={onImageSelect}
@@ -126,50 +171,8 @@ const VideoHero = ({
                     onClearImage={onClearImage}
                   />
                 </div>
-              ) : generatedImage ? (
-                <div className="space-y-4">
-                  <p className="text-primary-foreground/90">
-                    Climate effect visualization complete! 
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-4">
-                    <Button 
-                      onClick={handleDownload}
-                      variant="outline"
-                      className="glass-button"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                    <Button 
-                      onClick={handleShare}
-                      variant="outline"
-                      className="glass-button"
-                    >
-                      <Share className="h-4 w-4 mr-2" />
-                      Share
-                    </Button>
-                    <Button 
-                      onClick={onReset}
-                      className="bg-gradient-nature text-primary-foreground hover:opacity-90"
-                    >
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Try Another Effect
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-primary-foreground/90">
-                  Great! Now choose a climate effect to visualize
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section - Effects Selector (only when image uploaded but not generated) */}
-        {selectedImage && !generatedImage && (
-          <div className="p-6">
-            <div className="max-w-4xl mx-auto">
+              </div>
+            ) : !generatedImage ? (
               <div className="glass-card p-6 animate-slide-up">
                 <EffectSelector
                   selectedEffect={selectedEffect}
@@ -179,9 +182,9 @@ const VideoHero = ({
                   minimal={true}
                 />
               </div>
-            </div>
+            ) : null}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
